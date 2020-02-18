@@ -1,9 +1,5 @@
 <template>
   <div class="home">
-    <HelloWorld bb="Berber" :count="count" />
-    <HelloWorld bb="Berber" :count="count + 1" />
-    <HelloWorld bb="Berber" :count="3" />
-    <HelloWorld bb="Berder" :count="4" />
     <button @click="add">add</button>
     <button @click="logout">logout</button>
   </div>
@@ -11,14 +7,11 @@
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue';
+import firebase from "firebase";
 
-import firebase from 'firebase';
 export default {
-  name: 'Home',
-  components: {
-    HelloWorld
-  },
+  name: "Home",
+  components: {},
   data() {
     return {
       count: 1
@@ -30,7 +23,7 @@ export default {
         .auth()
         .signOut()
         .then(() => {
-          this.$router.replace('login');
+          this.$router.replace("login");
         });
     },
     add() {
