@@ -1,34 +1,22 @@
 <template>
   <div class="home">
-    <button @click="add">add</button>
-    <button @click="logout">logout</button>
+    <Header />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import firebase from "firebase";
+import Header from "../components/Header";
 
 export default {
   name: "Home",
-  components: {},
+  components: {
+    Header
+  },
   data() {
     return {
       count: 1
     };
-  },
-  methods: {
-    logout: function() {
-      firebase
-        .auth()
-        .signOut()
-        .then(() => {
-          this.$router.replace("login");
-        });
-    },
-    add() {
-      this.count++;
-    }
   }
 };
 </script>

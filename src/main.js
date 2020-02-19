@@ -10,8 +10,6 @@ import firebase from "firebase";
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
 
-let app = "";
-
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyASNxLbemWVg1B4tPuGnTw6RrLqC8qoJEc",
@@ -26,13 +24,13 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 // firebase.analytics();
-
-firebase.auth().onAuthStateChanged(() => {
-  if (!app) {
-    app = new Vue({
-      router,
-      store,
-      render: h => h(App)
-    }).$mount("#app");
-  }
+firebase.auth().onAuthStateChanged(user => {
+  console.log(user);
+  store.dispatch("fetchUser", user);
 });
+
+new Vue({
+  router,
+  store,
+  render: h => h(App)
+}).$mount("#app");

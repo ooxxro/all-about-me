@@ -4,6 +4,7 @@ import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import SignUp from "../views/SignUp.vue";
 import UserContainer from "../views/UserContainer.vue";
+import Setting from "../views/Setting";
 // import firebase from "firebase";
 
 Vue.use(VueRouter);
@@ -39,6 +40,11 @@ const routes = [
     path: "/sign-up",
     name: "SignUp",
     component: SignUp
+  },
+  {
+    path: "/setting",
+    name: "Setting",
+    component: Setting
   }
 ];
 
