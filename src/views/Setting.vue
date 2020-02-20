@@ -143,6 +143,60 @@
           ></el-input>
         </div>
         <!-- <end: future goal> -->
+
+        <!-- <Fun Stuff> -->
+        <h4>Fun Stuff</h4>
+        <div>
+          <div v-for="(c, i) in form.funStuff" :key="i" style="margin: 0 -5px">
+            <el-tag
+              closable
+              :disable-transitions="false"
+              @close="removeFun(i)"
+              type="success"
+            >
+              {{ c }}
+            </el-tag>
+          </div>
+          <el-input
+            v-model="newFun"
+            placeholder="Tell your fun story"
+            @keyup.enter.native="addFun"
+            @blur="addFun"
+          ></el-input>
+        </div>
+        <!-- </End: Fun Stuff> -->
+
+        <!-- <Other Stuff> -->
+        <h4>Other Stuff</h4>
+        <div></div>
+        <!-- </End: Other Stuff> -->
+
+        <!-- <Interesting Links> -->
+        <h4>Interesting Links</h4>
+        <div>
+          <div
+            v-for="(c, i) in form.interestingLinks"
+            :key="i"
+            style="margin: 0 -5px"
+          >
+            <el-tag
+              closable
+              :disable-transitions="false"
+              @close="removeLink(i)"
+              type="success"
+            >
+              {{ c }}
+            </el-tag>
+          </div>
+          <el-input
+            v-model="newLink"
+            placeholder="Tell your fun story"
+            @keyup.enter.native="addLink"
+            @blur="addLink"
+          ></el-input>
+        </div>
+        <!-- </End: Interesting Links> -->
+
         <div class="bottom-button">
           <el-button type="danger" @click="onSubmit">Save</el-button>
         </div>
@@ -173,10 +227,14 @@ export default {
       newClass: "",
       classInputVisible: false,
       newGoal: "",
+      newFun: "",
+      newLink: "",
       form: {
         aboutMe: "",
         myClasses: [],
-        futureGoals: []
+        futureGoals: [],
+        funStuff: [],
+        interestingLinks: []
       }
     };
   },
@@ -299,6 +357,8 @@ export default {
           this.form.aboutMe = data.aboutMe || "";
           this.form.myClasses = data.myClasses || [];
           this.form.futureGoals = data.futureGoals || [];
+          this.form.funStuff = data.funStuff || [];
+          this.form.interestingLinks = data.interestingLinks || [];
           // console.log(doc.data());
         } else {
           // console.log("not found");
@@ -332,6 +392,27 @@ export default {
     removeGoal(index) {
       this.form.futureGoals.splice(index, 1);
     },
+    addFun() {
+      let newFun = this.newFun.trim();
+      if (newFun && !this.form.funStuff.includes(newFun)) {
+        this.form.funStuff.push(newFun);
+      }
+      this.newFun = "";
+    },
+    removeFun(index) {
+      this.form.funStuff.splice(index, 1);
+    },
+    addLink() {
+      let newLink = this.newLink.trim();
+      if (newLink && !this.form.interestingLinks.includes(newLink)) {
+        this.form.interestingLinks.push(newLink);
+      }
+      this.newLink = "";
+    },
+    removeLink(index) {
+      this.form.interestingLinks.splice(index, 1);
+    },
+
     onSubmit() {
       console.log("submit!");
       let db = firebase.firestore();
@@ -341,7 +422,9 @@ export default {
         .set({
           aboutMe: this.form.aboutMe.trim(),
           myClasses: this.form.myClasses,
-          futureGoals: this.form.futureGoals
+          futureGoals: this.form.futureGoals,
+          funStuff: this.form.funStuff,
+          interestingLinks: this.form.interestingLinks
         })
         .then(() => {
           alert("Update Profile Successful.");

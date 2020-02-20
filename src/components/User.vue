@@ -76,7 +76,7 @@
           <div class="futureGoal-down">
             <div v-for="(c, i) in data.futureGoals" :key="i">
               <div class="futureGoal-list">
-                {{ i + 1 + ". " + c }}
+                {{ c }}
               </div>
               <br />
             </div>
@@ -89,11 +89,18 @@
             <h2>Fun Stuff</h2>
           </div>
           <div class="funStuff-down">
-            <p>
-              Boring days
-              <br />
-              <br />Nothing to say
-            </p>
+            <div class="funStuff-left">
+              <div class="img-wrapper">
+                <img src="../assets/yoyo.png" alt="profile image" />
+              </div>
+            </div>
+            <div
+              class="funStuff-right"
+              v-for="(c, i) in data.funStuff"
+              :key="i"
+            >
+              {{ c }}
+            </div>
           </div>
         </div>
       </div>
@@ -117,11 +124,15 @@
             <h2>Interesting Links</h2>
           </div>
           <div class="link-down">
-            <p>
-              google.com
-              <br />
-              <br />canvas.wisc.edu
-            </p>
+            <a
+              class="link"
+              v-for="(c, i) in data.interestingLinks"
+              :key="i"
+              :href="c"
+              target="_blank"
+            >
+              {{ c }}
+            </a>
           </div>
         </div>
       </div>
@@ -226,6 +237,9 @@ export default {
     // line-height: 1.5;
     h2 {
       font-size: 22px;
+      // font-family: "Carter One", cursive;
+      // font-family: "Leckerli One", cursive;
+      font-family: "McLaren", cursive;
     }
   }
 
@@ -270,9 +284,10 @@ export default {
       max-height: 300px;
       line-height: 1.5;
       h2 {
-        margin-top: 0;
-        font-size: 28px;
+        margin: 0 0 14px;
+        font-size: 36px;
         color: #ff037b;
+        font-family: "Gaegu", cursive;
       }
     }
   }
@@ -312,6 +327,40 @@ export default {
 
   .content-funStuff {
     border-left: 9px solid #80d49a;
+    .funStuff-down {
+      display: flex;
+      padding: 0 28px;
+      align-items: center;
+    }
+    .funStuff-left {
+      flex: 1 0 35%;
+      transform: rotate(-7deg);
+      .img-wrapper {
+        border: 5px solid #80d49a;
+        transform: translate(-5px, 5px);
+        position: relative;
+        padding-top: 100%;
+      }
+      img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border: 5px solid #b9ebc9;
+        transform: translate(10px, -15px);
+      }
+    }
+    .funStuff-right {
+      // border-left: 6px solid #bace5c;
+      padding: 10px 30px;
+      display: inline-block;
+      background: #ffbaba;
+      color: #000;
+      margin: 10px;
+      border-radius: 4px;
+    }
   }
 
   .content-otherStuff {
@@ -321,6 +370,15 @@ export default {
   .content-interestingLinks {
     border-left: 9px solid #d8a8e7;
     //  #d2bcd5;
+    .link {
+      border-left: 6px solid #d8a8e7;
+      display: block;
+      padding: 10px 30px;
+      background: #ffbaba;
+      color: #000;
+      margin: 10px;
+      border-radius: 4px;
+    }
   }
 
   .content-comments {
