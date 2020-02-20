@@ -283,6 +283,8 @@ export default {
       min-height: 200px;
       max-height: 300px;
       line-height: 1.5;
+      font-family: "Kalam", cursive;
+      font-size: 20px;
       h2 {
         margin: 0 0 14px;
         font-size: 36px;
@@ -308,6 +310,8 @@ export default {
         color: #000;
         margin: 10px;
         border-radius: 4px;
+        font-family: "Boogaloo", cursive;
+        font-size: 20px;
       }
     }
   }

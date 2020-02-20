@@ -60,6 +60,7 @@ export default {
 .header {
   height: 64px;
   background: #fff;
+  // #fdf2f0
   display: flex;
   justify-content: space-between;
   align-items: center;
