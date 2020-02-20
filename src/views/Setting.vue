@@ -1,20 +1,87 @@
 <template>
   <div class="setting-page">
     <Header />
-    <el-card>
-      <h3>Update your profile!</h3>
-      <el-form
-        ref="form"
-        :model="form"
-        label-width="80px"
-        @submit.native.prevent
-      >
-        <el-form-item label="About Me">
+    <Loading v-if="!user.data" />
+    <template v-else>
+      <!-- <Account Setting> -->
+      <el-card>
+        <h3>Account Setting</h3>
+
+        <h4>Dispaly Name</h4>
+        <div class="form-item">
+          <el-input v-model="displayName" placeholder="Bucky Badger"></el-input>
+          <el-button
+            type="danger"
+            @click="onSubmitDisplayName"
+            :disabled="
+              displayName.trim() === user.data.displayName ||
+                !displayName.trim()
+            "
+          >
+            Save
+          </el-button>
+        </div>
+
+        <h4>Email</h4>
+        <div class="form-item">
+          <el-input
+            v-model="email"
+            type="email"
+            placeholder="bucky.badger@wisc.edu"
+          ></el-input>
+          <el-button
+            type="danger"
+            @click="onSubmitEmail"
+            :disabled="email.trim() === user.data.email || !email.trim()"
+          >
+            Save
+          </el-button>
+        </div>
+
+        <h4>Change Password</h4>
+        <div class="form-item">
+          <el-input
+            v-model="currentPassword"
+            placeholder="Current Password"
+            show-password
+          ></el-input>
+          <el-input
+            v-model="newPassword"
+            placeholder="New Password"
+            show-password
+          ></el-input>
+          <el-input
+            v-model="confirmNewPassword"
+            placeholder="Confirm New Password"
+            show-password
+          ></el-input>
+          <el-button
+            @click="onSubmitPassword"
+            type="danger"
+            :disabled="
+              !currentPassword ||
+                !newPassword ||
+                newPassword !== confirmNewPassword
+            "
+          >
+            Change
+          </el-button>
+        </div>
+      </el-card>
+      <!-- </End: Account Setting> -->
+
+      <!-- <Profile Setting> -->
+      <el-card>
+        <h3>Update Your Profile!</h3>
+
+        <h4>About Me</h4>
+        <div class="form-item">
           <el-input type="textarea" :rows="5" v-model="form.aboutMe"></el-input>
-        </el-form-item>
+        </div>
 
         <!-- my class -->
-        <el-form-item label="My Class">
+        <h4>My Classes</h4>
+        <div style="margin: -5px">
           <el-tag
             v-for="(c, i) in form.myClasses"
             :key="i"
@@ -34,6 +101,7 @@
             placeholder="CS506"
             @keyup.enter.native="addClass"
             @blur="addClass"
+            style="margin: 5px"
           >
           </el-input>
           <el-button
@@ -43,17 +111,44 @@
             plain
             size="small"
             @click="showClassInput"
+            style="margin: 5px"
           >
             + New Class
           </el-button>
-        </el-form-item>
+        </div>
         <!-- end: my class -->
 
-        <el-form-item>
+        <!-- <future goal> -->
+        <h4>Future Goal</h4>
+        <div>
+          <div
+            v-for="(c, i) in form.futureGoals"
+            :key="i"
+            style="margin: 0 -5px"
+          >
+            <el-tag
+              closable
+              :disable-transitions="false"
+              @close="removeGoal(i)"
+              type="warning"
+            >
+              {{ i + 1 + ". " + c }}
+            </el-tag>
+          </div>
+          <el-input
+            v-model="newGoal"
+            placeholder="Get A in CS506. (Press Enter to add a future goal)"
+            @keyup.enter.native="addGoal"
+            @blur="addGoal"
+          ></el-input>
+        </div>
+        <!-- <end: future goal> -->
+        <div class="bottom-button">
           <el-button type="danger" @click="onSubmit">Save</el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+        </div>
+      </el-card>
+      <!-- <End: Profile Setting> -->
+    </template>
   </div>
 </template>
 
@@ -61,7 +156,7 @@
 // @ is an alias to /src
 import Header from "../components/Header";
 import firebase from "firebase";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   name: "Setting",
@@ -70,11 +165,18 @@ export default {
   },
   data() {
     return {
+      displayName: "",
+      email: "",
+      currentPassword: "",
+      newPassword: "",
+      confirmNewPassword: "",
       newClass: "",
       classInputVisible: false,
+      newGoal: "",
       form: {
         aboutMe: "",
-        myClasses: []
+        myClasses: [],
+        futureGoals: []
       }
     };
   },
@@ -83,7 +185,126 @@ export default {
       user: "user"
     })
   },
+  watch: {
+    user: {
+      handler(user) {
+        if (user.data) {
+          this.displayName = user.data.displayName || "";
+          this.email = user.data.email || "";
+
+          this.fetchProfile(user.data.uid);
+        }
+      },
+      deep: true,
+      immediate: true
+    }
+  },
   methods: {
+    ...mapActions(["fetchUser"]),
+    onSubmitDisplayName() {
+      const user = firebase.auth().currentUser;
+
+      user
+        .updateProfile({
+          displayName: this.displayName.trim()
+        })
+        .then(() => {
+          // Update successful.
+          return user.reload();
+        })
+        .then(() => {
+          this.fetchUser(firebase.auth().currentUser);
+          alert("Update Display Name Successful.");
+        })
+        .catch(() => {
+          // An error happened.
+          alert("Error occurred when updating Display Name.");
+        });
+    },
+    async onSubmitEmail() {
+      const user = firebase.auth().currentUser;
+      let password;
+      try {
+        const { value } = await this.$prompt(
+          "Please type your Password",
+          "Confirm update email",
+          {
+            confirmButtonText: "OK",
+            cancelButtonText: "cancel",
+            inputType: "password"
+          }
+        );
+        password = value;
+      } catch (err) {
+        // user canceled
+        return;
+      }
+
+      try {
+        await this.reauthenticate(user.email, password);
+      } catch (err) {
+        alert(err.message);
+        return;
+      }
+
+      try {
+        await user.updateEmail(this.email);
+        // Update successful.
+        await user.reload();
+        this.fetchUser(firebase.auth().currentUser);
+        alert("Update email Successful.");
+      } catch (err) {
+        // An error happened.
+        alert("Error occurred when updating email.");
+        return;
+      }
+    },
+    async onSubmitPassword() {
+      const user = firebase.auth().currentUser;
+
+      try {
+        await this.reauthenticate(user.email, this.currentPassword);
+      } catch (err) {
+        alert(err.message);
+        return;
+      }
+
+      try {
+        await user.updatePassword(this.newPassword);
+        // Update successful.
+        alert("Change Password Successful.");
+        this.currentPassword = "";
+        this.newPassword = "";
+        this.confirmNewPassword = "";
+      } catch (err) {
+        // An error happened.
+        alert("Error occurred when changing Password: " + err.message);
+      }
+    },
+    reauthenticate(email, password) {
+      const user = firebase.auth().currentUser;
+      const credential = firebase.auth.EmailAuthProvider.credential(
+        email,
+        password
+      );
+      // Now you can use that to reauthenticate
+      return user.reauthenticateWithCredential(credential);
+    },
+    fetchProfile(uid) {
+      let db = firebase.firestore();
+      let docRef = db.collection("aboutMe").doc(uid);
+      docRef.get().then(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          this.form.aboutMe = data.aboutMe || "";
+          this.form.myClasses = data.myClasses || [];
+          this.form.futureGoals = data.futureGoals || [];
+          // console.log(doc.data());
+        } else {
+          // console.log("not found");
+        }
+      });
+    },
     addClass() {
       let newClass = this.newClass.trim();
       if (newClass && !this.form.myClasses.includes(newClass)) {
@@ -93,13 +314,23 @@ export default {
       this.newClass = "";
     },
     removeClass(index) {
-      this.dynamicTags.splice(index, 1);
+      this.form.myClasses.splice(index, 1);
     },
     showClassInput() {
       this.classInputVisible = true;
       this.$nextTick(() => {
         this.$refs.newClassInput.$refs.input.focus();
       });
+    },
+    addGoal() {
+      let newGoal = this.newGoal.trim();
+      if (newGoal && !this.form.futureGoals.includes(newGoal)) {
+        this.form.futureGoals.push(newGoal);
+      }
+      this.newGoal = "";
+    },
+    removeGoal(index) {
+      this.form.futureGoals.splice(index, 1);
     },
     onSubmit() {
       console.log("submit!");
@@ -108,8 +339,15 @@ export default {
       db.collection("aboutMe")
         .doc(this.user.data.uid)
         .set({
-          aboutMe: this.form.aboutMe,
-          myClasses: this.form.myClasses
+          aboutMe: this.form.aboutMe.trim(),
+          myClasses: this.form.myClasses,
+          futureGoals: this.form.futureGoals
+        })
+        .then(() => {
+          alert("Update Profile Successful.");
+        })
+        .catch(err => {
+          alert("Error occurred when updating profile: " + err.message);
         });
     }
   }
@@ -117,23 +355,29 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.setting-page {
+.form-item {
+  display: flex;
+  input {
+    flex: 1;
+  }
+  > *:not(:last-child) {
+    margin-right: 1rem;
+  }
 }
 .el-card {
   margin: 35px auto;
+  padding: 50px 30px;
   max-width: 800px;
 }
 h3 {
   text-align: center;
   font-size: 24px;
-  margin-bottom: 40px;
-}
-.el-form {
-  padding: 30px;
+  margin: 0 auto 50px;
 }
 
-.el-tag + .el-tag {
-  margin-left: 10px;
+.el-tag {
+  margin: 5px;
+  font-size: 14px;
 }
 .button-new-class {
   margin-left: 10px;
@@ -146,5 +390,10 @@ h3 {
   width: 90px;
   margin-left: 10px;
   vertical-align: bottom;
+}
+.bottom-button {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: flex-end;
 }
 </style>

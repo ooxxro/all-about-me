@@ -4,26 +4,27 @@
       <h1>All About Me</h1>
     </router-link>
 
-    <div class="right">
-      <el-dropdown
-        v-if="user.loggedIn"
-        trigger="click"
-        @command="dropDownClick"
-      >
-        <el-avatar
-          size="large"
-          src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
-        />
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item class="link">
-            <router-link to="/user">Profile</router-link>
-          </el-dropdown-item>
-          <el-dropdown-item class="link">
-            <router-link to="/setting">Setting</router-link>
-          </el-dropdown-item>
-          <el-dropdown-item divided command="logout">Logout</el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
+    <div class="right" v-if="!user.loading">
+      <div class="logged-in" v-if="user.loggedIn">
+        <router-link class="profile-wrapper" to="/user">
+          <div class="name" v-if="user.data.displayName">
+            {{ user.data.displayName }}
+          </div>
+          <el-avatar
+            size="large"
+            src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
+          />
+        </router-link>
+        <el-dropdown trigger="click" @command="dropDownClick">
+          <i class="el-icon-more"></i>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item class="link">
+              <router-link to="/setting">Setting</router-link>
+            </el-dropdown-item>
+            <el-dropdown-item divided command="logout">Logout</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </div>
       <div v-else class="visiter">
         <router-link class="login" to="/login">LOGIN</router-link>
         <router-link class="signUp" to="/sign-up">SIGN UP</router-link>
@@ -69,24 +70,57 @@ export default {
   }
   h1 {
     margin: 0;
-    color: #333;
+    color: #fc4c92;
+    font-family: "Architects Daughter", cursive;
+    // font-family: "Carter One", cursive;
+    text-shadow: 2px 2px 0px #fff, 5px 4px 0px rgba(0, 0, 0, 0.15);
   }
 }
 
 .right {
+  .logged-in {
+    display: flex;
+    align-items: center;
+    margin-right: -8px;
+  }
+  .profile-wrapper {
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+    padding: 5px;
+    transition: all 0.4s;
+    color: inherit;
+    &:hover {
+      background: #eee;
+    }
+    .name {
+      margin: 10px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  }
   .el-dropdown {
+    i {
+      font-size: 1.5rem;
+      padding: 13px;
+      border-radius: 4px;
+      &:hover {
+        background: #eee;
+      }
+    }
     cursor: pointer;
   }
   .visiter {
     a {
       color: #fc4c92;
       background: #fff;
-      padding: 6px 12px;
+      padding: 9px 12px;
       border-radius: 4px;
       border: 1px solid #fc4c92;
       font-size: 16px;
       line-height: 16px;
       transition: all 0.3s;
+      display: inline-block;
       // font-weight:
       &:not(:last-child) {
         margin-right: 1rem;

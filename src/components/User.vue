@@ -7,37 +7,53 @@
         </div>
       </div>
       <div class="menu-bottom">
-        <button class="menu-item">About Me</button>
-        <!-- <button class="menu-item">Friend List</button> -->
-        <button class="menu-item">My Class</button>
-        <button class="menu-item">Future Goal</button>
-        <button class="menu-item">Fun Stuff</button>
-        <button class="menu-item">Other Stuff</button>
-        <button class="menu-item">Interesting Links</button>
-        <!-- <button class="menu-item">Comments</button> -->
+        <button class="menu-item menu-aboutMe">About Me</button>
+        <button class="menu-item menu-friendList">Friend List</button>
+        <button class="menu-item menu-myClass">My Class</button>
+        <button class="menu-item menu-futureGoal">Future Goal</button>
+        <button class="menu-item menu-funStuff">Fun Stuff</button>
+        <button class="menu-item menu-otherStuff">Other Stuff</button>
+        <button class="menu-item menu-interestiongLinks">
+          Interesting Links
+        </button>
+        <button class="menu-item menu-comments">Comments</button>
       </div>
     </div>
     <div class="content">
       <div class="content-aboutMe">
         <div class="aboutMe-upDown">
-          <div class="aboutMe-up">
-            <h2>Who am I</h2>
-          </div>
-
           <div class="aboutMe-down">
             <div class="down-left">
-              <img src="../assets/yoshi-circle.jpg" alt="profile image" />
+              <div class="img-wrapper">
+                <img src="../assets/keropi2.jpg" alt="profile image" />
+              </div>
             </div>
-            <div class="down-right">
-              <p v-if="data">
-                {{ data.aboutMe }}
-              </p>
+            <div class="down-right" v-if="data">
+              <h2>Hi, I'm {{ displayName ? displayName : "..." }}</h2>
+              <div v-if="data.aboutMe">{{ data.aboutMe }}</div>
+              <div v-else>I'm too lazy to write something about myself...</div>
             </div>
           </div>
         </div>
       </div>
-      <!-- <div class="content-friendList"></div> -->
-      <div class="section content-myClass">
+      <div class="section content-friendList">
+        <div class="friendList-upDown">
+          <div class="friendList-up">
+            <h2>Friend List</h2>
+          </div>
+          <div class="friendList-down">
+            <p>
+              Derder
+              <br />
+              <br />Snoopy
+            </p>
+          </div>
+        </div>
+      </div>
+      <div
+        class="section content-myClass"
+        v-if="data.myClasses && data.myClasses.length"
+      >
         <div class="myClass-upDown">
           <div class="myclass-up">
             <h2>My Class</h2>
@@ -49,17 +65,21 @@
           </div>
         </div>
       </div>
-      <div class="section content-futureGoal">
+      <div
+        class="section content-futureGoal"
+        v-if="data.futureGoals && data.futureGoals.length"
+      >
         <div class="futureGoal-upDown">
           <div class="futrueGoal-up">
             <h2>Future Goal</h2>
           </div>
           <div class="futureGoal-down">
-            <p>
-              Find a good man
+            <div v-for="(c, i) in data.futureGoals" :key="i">
+              <div class="futureGoal-list">
+                {{ i + 1 + ". " + c }}
+              </div>
               <br />
-              <br />Travel around the world
-            </p>
+            </div>
           </div>
         </div>
       </div>
@@ -105,7 +125,20 @@
           </div>
         </div>
       </div>
-      <!-- <div class="content-comments"></div> -->
+      <div class="section content-comments">
+        <div class="comments-upDown">
+          <div class="comments-up">
+            <h2>Comments</h2>
+          </div>
+          <div class="comments-down">
+            <p>
+              Hello
+              <br />
+              <br />Nice to meet you
+            </p>
+          </div>
+        </div>
+      </div>
 
       <!-- <div v-for="i in [...Array(100)]" :key="i">content</div> -->
       <footer>
@@ -118,7 +151,8 @@
 <script>
 export default {
   props: {
-    data: Object
+    data: Object,
+    displayName: String
   }
 };
 </script>
@@ -127,6 +161,7 @@ export default {
 .user-component {
   display: flex;
   height: calc(100vh - 64px);
+  color: #333333;
 }
 .menu {
   width: 240px;
@@ -147,6 +182,9 @@ export default {
         object-fit: cover;
       }
     }
+  }
+  .menu-top {
+    background: #fca9d0;
   }
   .menu-bottom {
     display: flex;
@@ -181,73 +219,121 @@ export default {
   overflow-x: hidden;
   overflow-y: auto;
   .section {
+    background: rgba(255, 227, 243, 0.5);
+    padding: 0.5rem 2.5rem 1.5rem 2.5rem;
+    margin: 50px;
+    border-radius: 5px;
+    // line-height: 1.5;
     h2 {
       font-size: 22px;
     }
   }
 
-  .aboutMe-down {
-    display: flex;
-  }
-  .aboutMe-up {
-    h2 {
-      font-size: 28px;
+  .content-aboutMe {
+    padding: 0rem 2.5rem 0.5rem 2.5rem;
+    .aboutMe-down {
+      margin-top: 55px;
+      display: flex;
+      padding: 0 70px;
+      align-items: center;
     }
-  }
-  .down-left {
-    img {
-      width: 200px;
-      height: 200px;
-      object-fit: cover;
+    .down-left {
+      flex: 1 0 35%;
+      .img-wrapper {
+        border: 5px solid #f55066;
+        transform: translate(-5px, 5px);
+        position: relative;
+        padding-top: 133%;
+      }
+      img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border: 5px solid #fff;
+        transform: translate(10px, -10px);
+      }
     }
-  }
-  .down-right {
-    display: flex;
-    align-items: center;
-    p {
+    .down-right {
+      flex: 1 0 65%;
+      overflow: auto;
+      align-items: center;
+      margin: 15px 0 15px 25px;
       white-space: pre-wrap;
+      padding: 20px 30px;
+      background: rgba(255, 255, 255, 0.5);
+      color: #000;
+      border-radius: 3px;
+      min-height: 200px;
+      max-height: 300px;
+      line-height: 1.5;
+      h2 {
+        margin-top: 0;
+        font-size: 28px;
+        color: #ff037b;
+      }
     }
   }
 
+  .content-friendList {
+    border-left: 9px solid #f78b7c;
+  }
+
   .content-myClass {
-    background: lightpink;
-    padding: 0.5rem 1rem;
+    // border-top: 9px solid orange;
+    border-left: 9px solid #fcae69;
     .myclass-down {
       .class-tag {
+        border-left: 6px solid #fcae69;
         padding: 10px 30px;
         display: inline-block;
-        background: darkmagenta;
-        color: #fff;
+        background: #ffbaba;
+        color: #000;
         margin: 10px;
-        border-radius: 3px;
+        border-radius: 4px;
       }
     }
   }
 
   .content-futureGoal {
-    // background: red;
-    padding: 0.5rem 1rem;
+    border-left: 9px solid #bace5c;
+    .futureGoal-list {
+      border-left: 6px solid #bace5c;
+      padding: 10px 30px;
+      display: inline-block;
+      background: #ffbaba;
+      color: #000;
+      margin: 10px;
+      border-radius: 4px;
+    }
   }
 
   .content-funStuff {
-    background: lightsalmon;
-    padding: 0.5rem 1rem;
+    border-left: 9px solid #80d49a;
   }
 
   .content-otherStuff {
-    // background: red;
-    padding: 0.5rem 1rem;
+    border-left: 9px solid #65cfc8;
   }
 
   .content-interestingLinks {
-    background: lightgoldenrodyellow;
-    padding: 0.5rem 1rem;
+    border-left: 9px solid #d8a8e7;
+    //  #d2bcd5;
+  }
+
+  .content-comments {
+    border-left: 9px solid #c7c1c1;
+    //  #d2bcd5;
   }
 
   footer {
-    background: lightgray;
+    background: #f1ccb8;
     text-align: center;
     p {
+      padding: 6px 0;
+      line-height: 20px;
       margin: 0;
     }
   }

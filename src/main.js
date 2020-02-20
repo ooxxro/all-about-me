@@ -6,9 +6,12 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import firebase from "firebase";
+import Loading from "./components/Loading";
 
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
+
+Vue.component("Loading", Loading);
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -25,7 +28,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 // firebase.analytics();
 firebase.auth().onAuthStateChanged(user => {
-  console.log(user);
+  // console.log(user);
   store.dispatch("fetchUser", user);
 });
 
