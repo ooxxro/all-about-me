@@ -75,9 +75,38 @@
         <h3>Update Your Profile!</h3>
 
         <h4>About Me</h4>
-        <input type="file" @change="uploadAboutMeImg" />
         <div class="form-item">
-          <el-input type="textarea" :rows="5" v-model="form.aboutMe"></el-input>
+          <div class="about-me-img-upload-wrapper">
+            <img
+              v-if="aboutMeImgUrl"
+              :src="aboutMeImgUrl"
+              alt="about me image"
+            />
+            <div class="upload-overlay">
+              <div
+                class="hint"
+                :class="{ 'no-img': !aboutMeImgUrl }"
+                :style="aboutMeImgProgress != -1 ? 'opacity: 1' : ''"
+              >
+                <i class="el-icon-upload"></i>
+                upload/change About Me photo!
+                <el-progress
+                  v-if="aboutMeImgProgress >= 0"
+                  type="circle"
+                  :percentage="aboutMeImgProgress"
+                  :status="aboutMeImgProgress === 100 ? 'success' : null"
+                  :width="100"
+                  color="#fc4c92"
+                />
+                <input
+                  type="file"
+                  accept="image/*"
+                  @change="uploadAboutMeImg"
+                />
+              </div>
+            </div>
+          </div>
+          <el-input type="textarea" :rows="8" v-model="form.aboutMe"></el-input>
         </div>
 
         <!-- my class -->
@@ -225,6 +254,8 @@ export default {
       currentPassword: "",
       newPassword: "",
       confirmNewPassword: "",
+      aboutMeImgUrl: null,
+      aboutMeImgProgress: -1,
       newClass: "",
       classInputVisible: false,
       newGoal: "",
@@ -252,6 +283,7 @@ export default {
           this.email = user.data.email || "";
 
           this.fetchProfile(user.data.uid);
+          this.fetchAboutMeImg(user.data.uid);
         }
       },
       deep: true,
@@ -371,12 +403,44 @@ export default {
       // Create a root reference
       let ref = firebase.storage().ref(this.user.data.uid + "/aboutme.png");
 
-      let file = e.target.files[0];
-      this.convertImg(file, "aboutme.png", 1200, png => {
-        ref.put(png).then(snapshot => {
-          console.log("Uploaded", snapshot);
-        });
+      this.convertImg(e.target.files[0], "aboutme.png", 1200, png => {
+        const task = ref.put(png);
+        task.on(
+          "state_changed",
+          snapshot => {
+            // progress
+            this.aboutMeImgProgress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          },
+          err => {
+            // error
+            alert("Error while uploading about me photo:", err.message);
+            setTimeout(() => {
+              this.aboutMeImgProgress = -1;
+            }, 1000);
+          },
+          () => {
+            // success
+            // console.log("Uploaded");
+            task.snapshot.ref.getDownloadURL().then(url => {
+              this.aboutMeImgUrl = url;
+              setTimeout(() => {
+                this.aboutMeImgProgress = -1;
+              }, 1000);
+            });
+          }
+        );
       });
+    },
+    fetchAboutMeImg(uid) {
+      let storage = firebase.storage();
+      let ref = storage.ref(uid + "/aboutme.png");
+      ref
+        .getDownloadURL()
+        .then(url => {
+          this.aboutMeImgUrl = url;
+        })
+        .catch(() => {});
     },
     convertImg(file, filename, resizeSize, cb) {
       //load original image
@@ -482,6 +546,7 @@ export default {
         })
         .then(() => {
           alert("Update Profile Successful.");
+          this.$router.push("/user");
         })
         .catch(err => {
           alert("Error occurred when updating profile: " + err.message);
@@ -494,6 +559,7 @@ export default {
 <style lang="scss" scoped>
 .form-item {
   display: flex;
+  align-items: center;
   input {
     flex: 1;
   }
@@ -510,6 +576,67 @@ h3 {
   text-align: center;
   font-size: 24px;
   margin: 0 auto 50px;
+}
+
+.about-me-img-upload-wrapper {
+  position: relative;
+  width: 210px;
+  height: 280px;
+  flex: 0 0 auto;
+  img {
+    width: 210px;
+    height: 280px;
+    object-fit: cover;
+    display: block;
+  }
+  .upload-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    .hint {
+      font-size: 20px;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      display: flex;
+      padding: 20px;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      opacity: 0;
+      transition: all 0.3s;
+      &:hover {
+        opacity: 1;
+      }
+      &.no-img {
+        background: rgba(255, 186, 186, 0.6);
+        color: #fc4c92;
+        opacity: 1;
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+      .el-icon-upload {
+        font-size: 50px;
+      }
+      > * {
+        margin: 8px 0;
+      }
+    }
+    input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+  }
 }
 
 .el-tag {
@@ -532,5 +659,8 @@ h3 {
   margin-top: 2rem;
   display: flex;
   justify-content: flex-end;
+}
+.el-textarea {
+  font-size: 16px;
 }
 </style>

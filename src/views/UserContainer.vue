@@ -69,9 +69,12 @@ export default {
     fetchAboutMeImg(uid) {
       let storage = firebase.storage();
       let ref = storage.ref(uid + "/aboutme.png");
-      ref.getDownloadURL().then(url => {
-        this.aboutMeImgUrl = url;
-      });
+      ref
+        .getDownloadURL()
+        .then(url => {
+          this.aboutMeImgUrl = url;
+        })
+        .catch(() => {});
     },
   },
 };

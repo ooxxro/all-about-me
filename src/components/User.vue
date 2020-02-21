@@ -26,9 +26,11 @@
             <div class="down-left">
               <div class="img-wrapper">
                 <img
-                  :src="aboutMeImgUrl || '../assets/keropi2.jpg'"
+                  v-if="aboutMeImgUrl"
+                  :src="aboutMeImgUrl"
                   alt="profile image"
                 />
+                <img v-else src="../assets/keropi2.jpg" alt="profile image" />
               </div>
             </div>
             <div class="down-right" v-if="data">
