@@ -3,7 +3,13 @@
     <div class="menu">
       <div class="menu-top">
         <div class="profile-wrapper">
-          <img src="../assets/yoshi-sticker.jpg" alt="profile image" />
+          <img
+            :src="
+              photoURL ||
+                'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
+            "
+            alt="avatar"
+          />
         </div>
       </div>
       <div class="menu-bottom">
@@ -173,6 +179,7 @@ export default {
   props: {
     data: Object,
     displayName: String,
+    photoURL: String,
     aboutMeImgUrl: String,
   },
 };

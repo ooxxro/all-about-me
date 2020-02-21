@@ -12,11 +12,14 @@
           </div>
           <el-avatar
             size="large"
-            src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
+            :src="
+              user.data.photoURL ||
+                'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
+            "
           />
         </router-link>
         <el-dropdown trigger="click" @command="dropDownClick">
-          <i class="el-icon-more"></i>
+          <i class="el-icon-more" />
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item class="link">
               <router-link to="/setting">Setting</router-link>

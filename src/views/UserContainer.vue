@@ -8,6 +8,7 @@
       v-else
       :data="data"
       :displayName="user.data.displayName"
+      :photoURL="user.data.photoURL"
       :aboutMeImgUrl="aboutMeImgUrl"
     />
   </div>

@@ -7,9 +7,22 @@
       <el-card>
         <h3>Account Setting</h3>
 
+        <h4>Avatar</h4>
+        <UploadImg
+          hint="+ avatar"
+          foldername="avatars"
+          :filename="user.data.uid + '.png'"
+          :resizeWidth="240"
+          :resizeHeight="240"
+          :width="120"
+          :height="120"
+          round
+          @uploaded="onUploadedAvatar"
+        />
+
         <h4>Dispaly Name</h4>
         <div class="form-item">
-          <el-input v-model="displayName" placeholder="Bucky Badger"></el-input>
+          <el-input v-model="displayName" placeholder="Bucky Badger" />
           <el-button
             type="danger"
             @click="onSubmitDisplayName"
@@ -28,7 +41,7 @@
             v-model="email"
             type="email"
             placeholder="bucky.badger@wisc.edu"
-          ></el-input>
+          />
           <el-button
             type="danger"
             @click="onSubmitEmail"
@@ -44,17 +57,17 @@
             v-model="currentPassword"
             placeholder="Current Password"
             show-password
-          ></el-input>
+          />
           <el-input
             v-model="newPassword"
             placeholder="New Password"
             show-password
-          ></el-input>
+          />
           <el-input
             v-model="confirmNewPassword"
             placeholder="Confirm New Password"
             show-password
-          ></el-input>
+          />
           <el-button
             @click="onSubmitPassword"
             type="danger"
@@ -76,37 +89,16 @@
 
         <h4>About Me</h4>
         <div class="form-item">
-          <div class="about-me-img-upload-wrapper">
-            <img
-              v-if="aboutMeImgUrl"
-              :src="aboutMeImgUrl"
-              alt="about me image"
-            />
-            <div class="upload-overlay">
-              <div
-                class="hint"
-                :class="{ 'no-img': !aboutMeImgUrl }"
-                :style="aboutMeImgProgress != -1 ? 'opacity: 1' : ''"
-              >
-                <i class="el-icon-upload"></i>
-                upload/change About Me photo!
-                <el-progress
-                  v-if="aboutMeImgProgress >= 0"
-                  type="circle"
-                  :percentage="aboutMeImgProgress"
-                  :status="aboutMeImgProgress === 100 ? 'success' : null"
-                  :width="100"
-                  color="#fc4c92"
-                />
-                <input
-                  type="file"
-                  accept="image/*"
-                  @change="uploadAboutMeImg"
-                />
-              </div>
-            </div>
-          </div>
-          <el-input type="textarea" :rows="8" v-model="form.aboutMe"></el-input>
+          <UploadImg
+            hint="upload/change About Me photo!"
+            :foldername="user.data.uid"
+            filename="aboutme.png"
+            :resizeWidth="1200"
+            :resizeHeight="1600"
+            :width="210"
+            :height="280"
+          />
+          <el-input type="textarea" :rows="8" v-model="form.aboutMe" />
         </div>
 
         <!-- my class -->
@@ -132,8 +124,7 @@
             @keyup.enter.native="addClass"
             @blur="addClass"
             style="margin: 5px"
-          >
-          </el-input>
+          />
           <el-button
             v-else
             class="button-new-class"
@@ -170,7 +161,7 @@
             placeholder="Get A in CS506. (Press Enter to add a future goal)"
             @keyup.enter.native="addGoal"
             @blur="addGoal"
-          ></el-input>
+          />
         </div>
         <!-- <end: future goal> -->
 
@@ -192,13 +183,13 @@
             placeholder="Tell your fun story"
             @keyup.enter.native="addFun"
             @blur="addFun"
-          ></el-input>
+          />
         </div>
         <!-- </End: Fun Stuff> -->
 
         <!-- <Other Stuff> -->
         <h4>Other Stuff</h4>
-        <div></div>
+        <div />
         <!-- </End: Other Stuff> -->
 
         <!-- <Interesting Links> -->
@@ -223,7 +214,7 @@
             placeholder="Tell your fun story"
             @keyup.enter.native="addLink"
             @blur="addLink"
-          ></el-input>
+          />
         </div>
         <!-- </End: Interesting Links> -->
 
@@ -238,14 +229,16 @@
 
 <script>
 // @ is an alias to /src
-import Header from "../components/Header";
 import firebase from "firebase";
 import { mapGetters, mapActions } from "vuex";
+import Header from "../components/Header";
+import UploadImg from "../components/UploadImg";
 
 export default {
   name: "Setting",
   components: {
     Header,
+    UploadImg,
   },
   data() {
     return {
@@ -292,6 +285,19 @@ export default {
   },
   methods: {
     ...mapActions(["fetchUser"]),
+    onUploadedAvatar(url) {
+      const user = firebase.auth().currentUser;
+      user
+        .updateProfile({
+          photoURL: url,
+        })
+        .then(() => {
+          return user.reload();
+        })
+        .then(() => {
+          this.fetchUser(firebase.auth().currentUser);
+        });
+    },
     onSubmitDisplayName() {
       const user = firebase.auth().currentUser;
 
@@ -576,67 +582,6 @@ h3 {
   text-align: center;
   font-size: 24px;
   margin: 0 auto 50px;
-}
-
-.about-me-img-upload-wrapper {
-  position: relative;
-  width: 210px;
-  height: 280px;
-  flex: 0 0 auto;
-  img {
-    width: 210px;
-    height: 280px;
-    object-fit: cover;
-    display: block;
-  }
-  .upload-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    .hint {
-      font-size: 20px;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      color: #fff;
-      display: flex;
-      padding: 20px;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      opacity: 0;
-      transition: all 0.3s;
-      &:hover {
-        opacity: 1;
-      }
-      &.no-img {
-        background: rgba(255, 186, 186, 0.6);
-        color: #fc4c92;
-        opacity: 1;
-        &:hover {
-          opacity: 0.8;
-        }
-      }
-      .el-icon-upload {
-        font-size: 50px;
-      }
-      > * {
-        margin: 8px 0;
-      }
-    }
-    input {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0;
-      cursor: pointer;
-    }
-  }
 }
 
 .el-tag {
