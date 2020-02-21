@@ -39,8 +39,8 @@ import { mapGetters } from "vuex";
 export default {
   computed: {
     ...mapGetters({
-      user: "user"
-    })
+      user: "user",
+    }),
   },
   methods: {
     dropDownClick(command) {
@@ -51,8 +51,8 @@ export default {
     logout() {
       console.log("logout");
       firebase.auth().signOut();
-    }
-  }
+    },
+  },
 };
 </script>
 

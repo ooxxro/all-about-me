@@ -163,8 +163,8 @@
 export default {
   props: {
     data: Object,
-    displayName: String
-  }
+    displayName: String,
+  },
 };
 </script>
 

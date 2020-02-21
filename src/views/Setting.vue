@@ -215,7 +215,7 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   name: "Setting",
   components: {
-    Header
+    Header,
   },
   data() {
     return {
@@ -234,14 +234,14 @@ export default {
         myClasses: [],
         futureGoals: [],
         funStuff: [],
-        interestingLinks: []
-      }
+        interestingLinks: [],
+      },
     };
   },
   computed: {
     ...mapGetters({
-      user: "user"
-    })
+      user: "user",
+    }),
   },
   watch: {
     user: {
@@ -254,8 +254,8 @@ export default {
         }
       },
       deep: true,
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   methods: {
     ...mapActions(["fetchUser"]),
@@ -264,7 +264,7 @@ export default {
 
       user
         .updateProfile({
-          displayName: this.displayName.trim()
+          displayName: this.displayName.trim(),
         })
         .then(() => {
           // Update successful.
@@ -289,7 +289,7 @@ export default {
           {
             confirmButtonText: "OK",
             cancelButtonText: "cancel",
-            inputType: "password"
+            inputType: "password",
           }
         );
         password = value;
@@ -424,7 +424,7 @@ export default {
           myClasses: this.form.myClasses,
           futureGoals: this.form.futureGoals,
           funStuff: this.form.funStuff,
-          interestingLinks: this.form.interestingLinks
+          interestingLinks: this.form.interestingLinks,
         })
         .then(() => {
           alert("Update Profile Successful.");
@@ -432,8 +432,8 @@ export default {
         .catch(err => {
           alert("Error occurred when updating profile: " + err.message);
         });
-    }
-  }
+    },
+  },
 };
 </script>
 

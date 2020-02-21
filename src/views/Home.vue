@@ -11,12 +11,12 @@ import Header from "../components/Header";
 export default {
   name: "Home",
   components: {
-    Header
+    Header,
   },
   data() {
     return {
-      count: 1
+      count: 1,
     };
-  }
+  },
 };
 </script>

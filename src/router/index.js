@@ -21,37 +21,37 @@ const routes = [
   {
     path: "/user",
     name: "User",
-    component: UserContainer
+    component: UserContainer,
   },
   {
     path: "/",
     name: "Home",
     component: Home,
     meta: {
-      requiresAuth: true
-    }
+      requiresAuth: true,
+    },
   },
   {
     path: "/login",
     name: "Login",
-    component: Login
+    component: Login,
   },
   {
     path: "/sign-up",
     name: "SignUp",
-    component: SignUp
+    component: SignUp,
   },
   {
     path: "/setting",
     name: "Setting",
-    component: Setting
-  }
+    component: Setting,
+  },
 ];
 
 const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
-  routes
+  routes,
 });
 
 // router.beforeEach((to, from, next) => {

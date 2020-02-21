@@ -43,12 +43,12 @@ import firebase from "firebase";
 export default {
   name: "signUp",
   components: {
-    Header
+    Header,
   },
   data() {
     return {
       email: "",
-      password: ""
+      password: "",
     };
   },
   methods: {
@@ -66,8 +66,8 @@ export default {
             alert("Oops. " + err.message);
           }
         );
-    }
-  }
+    },
+  },
 };
 </script>
 

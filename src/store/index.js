@@ -8,13 +8,13 @@ export default new Vuex.Store({
     user: {
       loading: true,
       loggedIn: false,
-      data: null
-    }
+      data: null,
+    },
   },
   getters: {
     user(state) {
       return state.user;
-    }
+    },
   },
   mutations: {
     SET_LOGGED_IN(state, value) {
@@ -23,7 +23,7 @@ export default new Vuex.Store({
     },
     SET_USER(state, data) {
       state.user.data = data;
-    }
+    },
   },
   actions: {
     fetchUser({ commit }, user) {
@@ -32,12 +32,12 @@ export default new Vuex.Store({
         commit("SET_USER", {
           displayName: user.displayName,
           email: user.email,
-          uid: user.uid
+          uid: user.uid,
         });
       } else {
         commit("SET_USER", null);
       }
-    }
+    },
   },
-  modules: {}
+  modules: {},
 });

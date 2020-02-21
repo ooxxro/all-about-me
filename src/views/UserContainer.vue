@@ -17,17 +17,17 @@ import { mapGetters } from "vuex";
 export default {
   components: {
     Header,
-    User
+    User,
   },
   data() {
     return {
-      data: null
+      data: null,
     };
   },
   computed: {
     ...mapGetters({
-      user: "user"
-    })
+      user: "user",
+    }),
   },
   watch: {
     user: {
@@ -36,8 +36,8 @@ export default {
         if (val.data && val.data.uid) this.updateData(val.data.uid);
       },
       deep: true,
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   methods: {
     updateData(uid) {
@@ -56,8 +56,8 @@ export default {
       // .catch(error => {
       //   console.log("Fetch data error:", error);
       // });
-    }
-  }
+    },
+  },
 };
 </script>
 

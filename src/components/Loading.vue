@@ -9,8 +9,8 @@ import SyncLoader from "vue-spinner/src/SyncLoader";
 
 export default {
   components: {
-    SyncLoader
-  }
+    SyncLoader,
+  },
 };
 </script>
 
