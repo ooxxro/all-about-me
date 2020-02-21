@@ -75,6 +75,7 @@
         <h3>Update Your Profile!</h3>
 
         <h4>About Me</h4>
+        <input type="file" @change="uploadAboutMeImg" />
         <div class="form-item">
           <el-input type="textarea" :rows="5" v-model="form.aboutMe"></el-input>
         </div>
@@ -364,6 +365,59 @@ export default {
           // console.log("not found");
         }
       });
+    },
+    // Update Profile
+    uploadAboutMeImg(e) {
+      // Create a root reference
+      let ref = firebase.storage().ref(this.user.data.uid + "/aboutme.png");
+
+      let file = e.target.files[0];
+      this.convertImg(file, "aboutme.png", 1200, png => {
+        ref.put(png).then(snapshot => {
+          console.log("Uploaded", snapshot);
+        });
+      });
+    },
+    convertImg(file, filename, resizeSize, cb) {
+      //load original image
+      let original = new Image();
+      original.onload = () => {
+        // put image to canvas
+        let canvas = document.createElement("canvas");
+        // reszie image using canvas
+        let width = original.width;
+        let height = original.height;
+        if (width > height) {
+          if (width > resizeSize) {
+            height *= resizeSize / width;
+            width = resizeSize;
+          }
+        } else {
+          if (height > resizeSize) {
+            width *= resizeSize / height;
+            height = resizeSize;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext("2d").drawImage(original, 0, 0, width, height);
+        // read from canvas to png image file
+        let dataURL = canvas.toDataURL("image/png");
+        // https://stackoverflow.com/a/43358515/12017013
+        let arr = dataURL.split(","),
+          mime = arr[0].match(/:(.*?);/)[1],
+          bstr = atob(arr[1]),
+          n = bstr.length,
+          u8arr = new Uint8Array(n);
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        cb(new File([u8arr], filename, { type: mime }));
+      };
+      original.onerror = () => {
+        alert("The provided file couldn't be loaded as an Image media");
+      };
+      original.src = URL.createObjectURL(file);
     },
     addClass() {
       let newClass = this.newClass.trim();

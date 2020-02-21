@@ -4,7 +4,12 @@
     <div v-if="!data || !user.data" class="loading-wrapper">
       <Loading />
     </div>
-    <User v-else :data="data" :displayName="user.data.displayName" />
+    <User
+      v-else
+      :data="data"
+      :displayName="user.data.displayName"
+      :aboutMeImgUrl="aboutMeImgUrl"
+    />
   </div>
 </template>
 
@@ -22,6 +27,7 @@ export default {
   data() {
     return {
       data: null,
+      aboutMeImgUrl: null,
     };
   },
   computed: {
@@ -33,7 +39,10 @@ export default {
     user: {
       handler(val) {
         // console.log("watch user", val);
-        if (val.data && val.data.uid) this.updateData(val.data.uid);
+        if (val.data && val.data.uid) {
+          this.updateData(val.data.uid);
+          this.fetchAboutMeImg(val.data.uid);
+        }
       },
       deep: true,
       immediate: true,
@@ -56,6 +65,13 @@ export default {
       // .catch(error => {
       //   console.log("Fetch data error:", error);
       // });
+    },
+    fetchAboutMeImg(uid) {
+      let storage = firebase.storage();
+      let ref = storage.ref(uid + "/aboutme.png");
+      ref.getDownloadURL().then(url => {
+        this.aboutMeImgUrl = url;
+      });
     },
   },
 };

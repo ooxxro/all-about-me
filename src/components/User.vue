@@ -25,7 +25,10 @@
           <div class="aboutMe-down">
             <div class="down-left">
               <div class="img-wrapper">
-                <img src="../assets/keropi2.jpg" alt="profile image" />
+                <img
+                  :src="aboutMeImgUrl || '../assets/keropi2.jpg'"
+                  alt="profile image"
+                />
               </div>
             </div>
             <div class="down-right" v-if="data">
@@ -128,7 +131,11 @@
               class="link"
               v-for="(c, i) in data.interestingLinks"
               :key="i"
-              :href="c"
+              :href="
+                !c.startsWith('http://') && !c.startsWith('https://')
+                  ? `http://${c}`
+                  : c
+              "
               target="_blank"
             >
               {{ c }}
@@ -164,6 +171,7 @@ export default {
   props: {
     data: Object,
     displayName: String,
+    aboutMeImgUrl: String,
   },
 };
 </script>
