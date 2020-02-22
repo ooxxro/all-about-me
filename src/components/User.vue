@@ -12,43 +12,67 @@
           />
         </div>
       </div>
+      <div class="menu-item-after menu-item-top-after" />
       <div class="menu-bottom">
-        <button class="menu-item menu-aboutMe" @click="scrollTo('#about-me')">
+        <div class="menu-item-before menu-about-me" />
+        <button class="menu-item menu-about-me" @click="scrollTo('#about-me')">
           About Me
         </button>
+        <div class="menu-item-after menu-about-me" />
+        <div class="menu-item-before menu-friend-list" />
         <button
-          class="menu-item menu-friendList"
+          class="menu-item menu-friend-list"
           @click="scrollTo('#friend-list')"
         >
           Friend List
         </button>
-        <button class="menu-item menu-myClass" @click="scrollTo('#my-classes')">
+        <div class="menu-item-after menu-friend-list" />
+        <div class="menu-item-before menu-my-classes" />
+        <button
+          class="menu-item menu-my-classes"
+          @click="scrollTo('#my-classes')"
+        >
           My Classes
         </button>
+        <div class="menu-item-after menu-my-classes" />
+        <div class="menu-item-before menu-future-goals" />
         <button
-          class="menu-item menu-futureGoal"
+          class="menu-item menu-future-goals"
           @click="scrollTo('#future-goals')"
         >
           Future Goals
         </button>
-        <button class="menu-item menu-funStuff" @click="scrollTo('#fun-stuff')">
+        <div class="menu-item-after menu-future-goals" />
+        <div class="menu-item-before menu-fun-stuff" />
+        <button
+          class="menu-item menu-fun-stuff"
+          @click="scrollTo('#fun-stuff')"
+        >
           Fun Stuff
         </button>
+        <div class="menu-item-after menu-fun-stuff" />
+        <div class="menu-item-before menu-other-stuff" />
         <button
-          class="menu-item menu-otherStuff"
+          class="menu-item menu-other-stuff"
           @click="scrollTo('#other-stuff')"
         >
           Other Stuff
         </button>
+        <div class="menu-item-after menu-other-stuff" />
+        <div class="menu-item-before menu-interesting-links" />
         <button
-          class="menu-item menu-interestiongLinks"
+          class="menu-item menu-interesting-links"
           @click="scrollTo('#interesting-links')"
         >
           Interesting Links
         </button>
+        <div class="menu-item-after menu-interesting-links" />
+        <div class="menu-item-before menu-comments" />
         <button class="menu-item menu-comments" @click="scrollTo('#comments')">
           Comments
         </button>
+        <div class="menu-item-after menu-comments" />
+        <div class="menu-item-bottom-block" />
       </div>
     </div>
     <div id="content" class="content">
@@ -81,32 +105,30 @@
           <div class="friendList-down" />
         </div>
       </div>
-      <div
-        id="my-classes"
-        class="section content-myClass"
-        v-if="data.myClasses && data.myClasses.length"
-      >
+      <div id="my-classes" class="section content-myClass">
         <div class="myClass-upDown">
           <div class="myclass-up">
             <h2>My Classes</h2>
           </div>
-          <div class="myclass-down">
+          <div
+            class="myclass-down"
+            v-if="data.myClasses && data.myClasses.length"
+          >
             <div class="class-tag" v-for="(c, i) in data.myClasses" :key="i">
               {{ c }}
             </div>
           </div>
         </div>
       </div>
-      <div
-        id="future-goals"
-        class="section content-futureGoal"
-        v-if="data.futureGoals && data.futureGoals.length"
-      >
+      <div id="future-goals" class="section content-futureGoal">
         <div class="futureGoal-upDown">
           <div class="futrueGoal-up">
             <h2>Future Goals</h2>
           </div>
-          <div class="futureGoal-down">
+          <div
+            class="futureGoal-down"
+            v-if="data.futureGoals && data.futureGoals.length"
+          >
             <div v-for="(c, i) in data.futureGoals" :key="i">
               <div class="futureGoal-list">
                 {{ c }}
@@ -121,16 +143,25 @@
           <div class="funStuff-up">
             <h2>Fun Stuff</h2>
           </div>
-          <div class="funStuff-down" v-for="(fun, i) in data.funStuff" :key="i">
-            <div class="funStuff-left" v-if="fun.imgUrl">
-              <div class="img-wrapper">
-                <img :src="fun.imgUrl" alt="fun stuff image" />
+          <template v-if="data.funStuff">
+            <div
+              class="funStuff-down"
+              v-for="(fun, i) in data.funStuff"
+              :key="i"
+            >
+              <div class="funStuff-left" v-if="fun.imgUrl">
+                <div class="img-wrapper">
+                  <img :src="fun.imgUrl" alt="fun stuff image" />
+                </div>
+              </div>
+              <div
+                class="funStuff-right"
+                :style="i % 2 !== 0 ? 'order: -1' : ''"
+              >
+                {{ fun.text }}
               </div>
             </div>
-            <div class="funStuff-right" :style="i % 2 !== 0 ? 'order: -1' : ''">
-              {{ fun.text }}
-            </div>
-          </div>
+          </template>
         </div>
       </div>
       <div id="other-stuff" class="section content-otherStuff">
@@ -138,7 +169,7 @@
           <div class="otherStuff-up">
             <h2>Other Stuff</h2>
           </div>
-          <div class="otherStuff-down">
+          <div class="otherStuff-down" v-if="data.otherStuff">
             <div>{{ data.otherStuff }}</div>
           </div>
         </div>
@@ -148,7 +179,7 @@
           <div class="link-up">
             <h2>Interesting Links</h2>
           </div>
-          <div class="link-down">
+          <div class="link-down" v-if="data.interestingLinks">
             <a
               class="link"
               v-for="(c, i) in data.interestingLinks"
@@ -174,7 +205,8 @@
             <p>
               Hello
               <br />
-              <br />Nice to meet you
+              <br />
+              Nice to meet you
             </p>
           </div>
         </div>
@@ -216,9 +248,18 @@ export default {
   width: 240px;
   overflow-x: hidden;
   overflow-y: auto;
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE and Edge */
+  -ms-overflow-style: none;
+
   .menu-top {
     padding: 20px;
     text-align: left;
+    background: #fca9d0;
+    border-bottom-right-radius: 50px;
     .profile-wrapper {
       border-radius: 50%;
       width: 120px;
@@ -232,35 +273,87 @@ export default {
       }
     }
   }
-  .menu-top {
-    background: #fca9d0;
-  }
   .menu-bottom {
     display: flex;
     flex-direction: column;
+    $dark: 5%;
+    .menu-about-me {
+      background: lighten(#f55066, $dark);
+    }
+    .menu-friend-list {
+      background: lighten(#f78b7c, $dark);
+    }
+    .menu-my-classes {
+      background: lighten(#fcae69, $dark);
+    }
+    .menu-future-goals {
+      background: lighten(#bace5c, $dark);
+    }
+    .menu-fun-stuff {
+      background: lighten(#80d49a, $dark);
+    }
+    .menu-other-stuff {
+      background: lighten(#65cfc8, $dark);
+    }
+    .menu-interesting-links {
+      background: lighten(#d8a8e7, $dark);
+    }
+    .menu-comments {
+      background: lighten(#c7c1c1, $dark);
+    }
     .menu-item {
-      height: 50px;
-      background: none;
-      color: inherit;
+      height: 60px;
+      // background: none;
+      color: #333;
       border: none;
+      font-weight: bold;
       padding: 0;
-      font: inherit;
       cursor: pointer;
       outline: inherit;
       transition: all 0.3s;
-      &:nth-child(3n + 1) {
-        background: lightsalmon;
-      }
-      &:nth-child(3n + 2) {
-        background: lightpink;
-      }
-      &:nth-child(3n) {
-        background: lightgoldenrodyellow;
-      }
+      border-top-left-radius: 50px;
+      border-bottom-right-radius: 50px;
+      overflow: hidden;
       &:hover {
-        opacity: 0.7;
+        // opacity: ;
       }
     }
+  }
+  .menu-item-before,
+  .menu-item-after {
+    position: relative;
+    &:before {
+      content: "";
+      position: absolute;
+      background: inherit;
+    }
+  }
+  .menu-item-before {
+    &:before {
+      top: -50px;
+      right: 0;
+      width: 50px;
+      height: 50px;
+      z-index: -1;
+    }
+  }
+  .menu-item-after {
+    &:before {
+      bottom: -50px;
+      left: 0;
+      width: 50px;
+      height: 50px;
+      z-index: -1;
+    }
+  }
+  .menu-item-top-after {
+    background: #fca9d0;
+  }
+  .menu-item-bottom-block {
+    border-top-left-radius: 50px;
+    background: #ffbaba;
+    height: 50px;
+    overflow: hidden;
   }
 }
 .content {
@@ -312,6 +405,9 @@ export default {
     .down-right {
       flex: 1 0 65%;
       overflow: auto;
+      &::-webkit-scrollbar {
+        background: transparent;
+      }
       align-items: center;
       margin: 15px 0 15px 25px;
       white-space: pre-wrap;
