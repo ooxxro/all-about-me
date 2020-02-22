@@ -53,7 +53,17 @@ export default {
     },
     logout() {
       console.log("logout");
-      firebase.auth().signOut();
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          // Sign-out successful.
+          this.$router.push("/");
+        })
+        .catch(error => {
+          // An error happened.
+          alert("Error when logout: ", error.message);
+        });
     },
   },
 };

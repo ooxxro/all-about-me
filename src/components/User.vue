@@ -13,20 +13,46 @@
         </div>
       </div>
       <div class="menu-bottom">
-        <button class="menu-item menu-aboutMe">About Me</button>
-        <button class="menu-item menu-friendList">Friend List</button>
-        <button class="menu-item menu-myClass">My Class</button>
-        <button class="menu-item menu-futureGoal">Future Goal</button>
-        <button class="menu-item menu-funStuff">Fun Stuff</button>
-        <button class="menu-item menu-otherStuff">Other Stuff</button>
-        <button class="menu-item menu-interestiongLinks">
+        <button class="menu-item menu-aboutMe" @click="scrollTo('#about-me')">
+          About Me
+        </button>
+        <button
+          class="menu-item menu-friendList"
+          @click="scrollTo('#friend-list')"
+        >
+          Friend List
+        </button>
+        <button class="menu-item menu-myClass" @click="scrollTo('#my-classes')">
+          My Classes
+        </button>
+        <button
+          class="menu-item menu-futureGoal"
+          @click="scrollTo('#future-goals')"
+        >
+          Future Goals
+        </button>
+        <button class="menu-item menu-funStuff" @click="scrollTo('#fun-stuff')">
+          Fun Stuff
+        </button>
+        <button
+          class="menu-item menu-otherStuff"
+          @click="scrollTo('#other-stuff')"
+        >
+          Other Stuff
+        </button>
+        <button
+          class="menu-item menu-interestiongLinks"
+          @click="scrollTo('#interesting-links')"
+        >
           Interesting Links
         </button>
-        <button class="menu-item menu-comments">Comments</button>
+        <button class="menu-item menu-comments" @click="scrollTo('#comments')">
+          Comments
+        </button>
       </div>
     </div>
-    <div class="content">
-      <div class="content-aboutMe">
+    <div id="content" class="content">
+      <div id="about-me" class="content-aboutMe">
         <div class="aboutMe-upDown">
           <div class="aboutMe-down">
             <div class="down-left">
@@ -47,7 +73,7 @@
           </div>
         </div>
       </div>
-      <div class="section content-friendList">
+      <div id="friend-list" class="section content-friendList">
         <div class="friendList-upDown">
           <div class="friendList-up">
             <h2>Friend List</h2>
@@ -62,12 +88,13 @@
         </div>
       </div>
       <div
+        id="my-classes"
         class="section content-myClass"
         v-if="data.myClasses && data.myClasses.length"
       >
         <div class="myClass-upDown">
           <div class="myclass-up">
-            <h2>My Class</h2>
+            <h2>My Classes</h2>
           </div>
           <div class="myclass-down">
             <div class="class-tag" v-for="(c, i) in data.myClasses" :key="i">
@@ -77,12 +104,13 @@
         </div>
       </div>
       <div
+        id="future-goals"
         class="section content-futureGoal"
         v-if="data.futureGoals && data.futureGoals.length"
       >
         <div class="futureGoal-upDown">
           <div class="futrueGoal-up">
-            <h2>Future Goal</h2>
+            <h2>Future Goals</h2>
           </div>
           <div class="futureGoal-down">
             <div v-for="(c, i) in data.futureGoals" :key="i">
@@ -94,7 +122,7 @@
           </div>
         </div>
       </div>
-      <div class="section content-funStuff">
+      <div id="fun-stuff" class="section content-funStuff">
         <div class="funStuff-upDown">
           <div class="funStuff-up">
             <h2>Fun Stuff</h2>
@@ -111,7 +139,7 @@
           </div>
         </div>
       </div>
-      <div class="section content-otherStuff">
+      <div id="other-stuff" class="section content-otherStuff">
         <div class="otherStuff-upDown">
           <div class="otherStuff-up">
             <h2>Other Stuff</h2>
@@ -125,7 +153,7 @@
           </div>
         </div>
       </div>
-      <div class="section content-interestingLinks">
+      <div id="interesting-link" class="section content-interestingLinks">
         <div class="link-upDown">
           <div class="link-up">
             <h2>Interesting Links</h2>
@@ -147,7 +175,7 @@
           </div>
         </div>
       </div>
-      <div class="section content-comments">
+      <div id="comments" class="section content-comments">
         <div class="comments-upDown">
           <div class="comments-up">
             <h2>Comments</h2>
@@ -176,6 +204,14 @@ export default {
     data: Object,
     displayName: String,
     photoURL: String,
+  },
+  methods: {
+    scrollTo(selector) {
+      this.$scrollTo(document.querySelector(selector), 300, {
+        container: document.querySelector("#content"),
+        offset: -40,
+      });
+    },
   },
 };
 </script>

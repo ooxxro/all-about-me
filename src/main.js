@@ -7,11 +7,14 @@ import router from "./router";
 import store from "./store";
 import firebase from "firebase";
 import Loading from "./components/Loading";
+import VueScrollTo from "vue-scrollto";
 
-Vue.config.productionTip = false;
 Vue.use(ElementUI);
+Vue.use(VueScrollTo);
 
 Vue.component("Loading", Loading);
+
+Vue.config.productionTip = false;
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -27,13 +30,17 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 // firebase.analytics();
+
+let app = null;
 firebase.auth().onAuthStateChanged(user => {
   // console.log(user);
   store.dispatch("fetchUser", user);
-});
 
-new Vue({
-  router,
-  store,
-  render: h => h(App),
-}).$mount("#app");
+  if (!app) {
+    app = new Vue({
+      router,
+      store,
+      render: h => h(App),
+    }).$mount("#app");
+  }
+});
