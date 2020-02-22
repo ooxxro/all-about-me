@@ -78,13 +78,7 @@
           <div class="friendList-up">
             <h2>Friend List</h2>
           </div>
-          <div class="friendList-down">
-            <p>
-              Derder
-              <br />
-              <br />Snoopy
-            </p>
-          </div>
+          <div class="friendList-down" />
         </div>
       </div>
       <div
@@ -145,11 +139,7 @@
             <h2>Other Stuff</h2>
           </div>
           <div class="otherStuff-down">
-            <p>
-              None
-              <br />
-              <br />Nothing here
-            </p>
+            <div>{{ data.otherStuff }}</div>
           </div>
         </div>
       </div>
@@ -277,6 +267,7 @@ export default {
   flex: 1;
   overflow-x: hidden;
   overflow-y: auto;
+  // word-break: break-word;
   .section {
     background: rgba(255, 227, 243, 0.5);
     padding: 0.5rem 2.5rem 1.5rem 2.5rem;
@@ -386,7 +377,7 @@ export default {
       justify-content: center;
     }
     .funStuff-left {
-      flex: 0 0 360px;
+      flex: 0 0 300px;
       transform: rotate(-7deg);
       .img-wrapper {
         border: 5px solid #80d49a;
@@ -418,6 +409,15 @@ export default {
 
   .content-otherStuff {
     border-left: 9px solid #65cfc8;
+    .otherStuff-down {
+      border-left: 6px solid #65cfc8;
+      padding: 10px 30px;
+      display: inline-block;
+      background: #ffbaba;
+      color: #000;
+      margin: 10px;
+      border-radius: 4px;
+    }
   }
 
   .content-interestingLinks {

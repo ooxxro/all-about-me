@@ -102,7 +102,7 @@
               :imgUrl="form.aboutMeImgUrl"
               @uploaded="url => (form.aboutMeImgUrl = url)"
             />
-            <el-input type="textarea" :rows="8" v-model.trim="form.aboutMe" />
+            <el-input type="textarea" :rows="8" v-model="form.aboutMe" />
           </div>
 
           <!-- my class -->
@@ -144,7 +144,7 @@
           <!-- end: my class -->
 
           <!-- <future goal> -->
-          <h4>Future Goal</h4>
+          <h4>Future Goals</h4>
           <div>
             <div
               v-for="(c, i) in form.futureGoals"
@@ -182,12 +182,12 @@
                 :foldername="user.data.uid"
                 :resizeWidth="800"
                 :resizeHeight="800"
-                :width="300"
-                :height="300"
+                :width="250"
+                :height="250"
                 :imgUrl="fun.imgUrl"
                 @uploaded="url => (fun.imgUrl = url)"
               />
-              <el-input type="textarea" :rows="8" v-model="fun.text" />
+              <el-input type="textarea" :rows="6" v-model="fun.text" />
               <el-button
                 type="danger"
                 icon="el-icon-delete"
@@ -203,6 +203,7 @@
 
           <!-- <Other Stuff> -->
           <h4>Other Stuff</h4>
+          <el-input type="textarea" :rows="4" v-model="form.otherStuff" />
           <div />
           <!-- </End: Other Stuff> -->
 
@@ -274,6 +275,7 @@ export default {
         myClasses: [],
         futureGoals: [],
         funStuff: [],
+        otherStuff: "",
         interestingLinks: [],
       },
     };
@@ -411,6 +413,7 @@ export default {
           this.form.myClasses = data.myClasses || [];
           this.form.futureGoals = data.futureGoals || [];
           this.form.funStuff = data.funStuff || [];
+          this.form.otherStuff = data.otherStuff || "";
           this.form.interestingLinks = data.interestingLinks || [];
           this.form.aboutMeImgUrl = data.aboutMeImgUrl || "";
           // console.log(doc.data());
@@ -517,6 +520,9 @@ h4 {
 .el-tag {
   margin: 5px;
   font-size: 14px;
+  word-break: break-word;
+  white-space: normal;
+  height: auto;
 }
 .button-new-class {
   margin-left: 10px;

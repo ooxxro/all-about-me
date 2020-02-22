@@ -17,5 +17,6 @@
 }
 body {
   background: #ffbaba;
+  word-break: break-word;
 }
 </style>
