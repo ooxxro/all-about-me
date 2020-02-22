@@ -240,6 +240,7 @@
           </div>
           <div class="comments-down">
             <vue-disqus
+              :key="uid"
               shortname="bb-all-about-me"
               :identifier="uid"
               :url="currentURL"

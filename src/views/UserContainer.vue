@@ -9,6 +9,7 @@
     </div>
     <User
       v-else
+      :key="$route.params.uid"
       :data="data"
       :loggedIn="user.loggedIn"
       :isSelf="user.loggedIn && user.data.uid === $route.params.uid"
