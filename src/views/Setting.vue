@@ -17,6 +17,7 @@
           :width="120"
           :height="120"
           round
+          :imgUrl="user.data.photoURL"
           @uploaded="onUploadedAvatar"
         />
 
@@ -87,139 +88,153 @@
       <el-card>
         <h3>Update Your Profile!</h3>
 
-        <h4>About Me</h4>
-        <div class="form-item">
-          <UploadImg
-            hint="upload/change About Me photo!"
-            :foldername="user.data.uid"
-            filename="aboutme.png"
-            :resizeWidth="1200"
-            :resizeHeight="1600"
-            :width="210"
-            :height="280"
-          />
-          <el-input type="textarea" :rows="8" v-model="form.aboutMe" />
-        </div>
-
-        <!-- my class -->
-        <h4>My Classes</h4>
-        <div style="margin: -5px">
-          <el-tag
-            v-for="(c, i) in form.myClasses"
-            :key="i"
-            closable
-            :disable-transitions="false"
-            @close="removeClass(i)"
-            type="danger"
-          >
-            {{ c }}
-          </el-tag>
-          <el-input
-            class="input-new-class"
-            v-if="classInputVisible"
-            v-model="newClass"
-            ref="newClassInput"
-            size="small"
-            placeholder="CS506"
-            @keyup.enter.native="addClass"
-            @blur="addClass"
-            style="margin: 5px"
-          />
-          <el-button
-            v-else
-            class="button-new-class"
-            type="primary"
-            plain
-            size="small"
-            @click="showClassInput"
-            style="margin: 5px"
-          >
-            + New Class
-          </el-button>
-        </div>
-        <!-- end: my class -->
-
-        <!-- <future goal> -->
-        <h4>Future Goal</h4>
         <div>
-          <div
-            v-for="(c, i) in form.futureGoals"
-            :key="i"
-            style="margin: 0 -5px"
-          >
-            <el-tag
-              closable
-              :disable-transitions="false"
-              @close="removeGoal(i)"
-              type="warning"
-            >
-              {{ i + 1 + ". " + c }}
-            </el-tag>
+          <h4>About Me</h4>
+          <div class="form-item">
+            <UploadImg
+              hint="upload/change About Me photo!"
+              :foldername="user.data.uid"
+              filename="aboutme.png"
+              :resizeWidth="1200"
+              :resizeHeight="1600"
+              :width="210"
+              :height="280"
+              :imgUrl="form.aboutMeImgUrl"
+              @uploaded="url => (form.aboutMeImgUrl = url)"
+            />
+            <el-input type="textarea" :rows="8" v-model.trim="form.aboutMe" />
           </div>
-          <el-input
-            v-model="newGoal"
-            placeholder="Get A in CS506. (Press Enter to add a future goal)"
-            @keyup.enter.native="addGoal"
-            @blur="addGoal"
-          />
-        </div>
-        <!-- <end: future goal> -->
 
-        <!-- <Fun Stuff> -->
-        <h4>Fun Stuff</h4>
-        <div>
-          <div v-for="(c, i) in form.funStuff" :key="i" style="margin: 0 -5px">
+          <!-- my class -->
+          <h4>My Classes</h4>
+          <div style="margin: -5px">
             <el-tag
+              v-for="(c, i) in form.myClasses"
+              :key="i"
               closable
               :disable-transitions="false"
-              @close="removeFun(i)"
-              type="success"
+              @close="removeClass(i)"
+              type="danger"
             >
               {{ c }}
             </el-tag>
-          </div>
-          <el-input
-            v-model="newFun"
-            placeholder="Tell your fun story"
-            @keyup.enter.native="addFun"
-            @blur="addFun"
-          />
-        </div>
-        <!-- </End: Fun Stuff> -->
-
-        <!-- <Other Stuff> -->
-        <h4>Other Stuff</h4>
-        <div />
-        <!-- </End: Other Stuff> -->
-
-        <!-- <Interesting Links> -->
-        <h4>Interesting Links</h4>
-        <div>
-          <div
-            v-for="(c, i) in form.interestingLinks"
-            :key="i"
-            style="margin: 0 -5px"
-          >
-            <el-tag
-              closable
-              :disable-transitions="false"
-              @close="removeLink(i)"
-              type="success"
+            <el-input
+              class="input-new-class"
+              v-if="classInputVisible"
+              v-model="newClass"
+              ref="newClassInput"
+              size="small"
+              placeholder="CS506"
+              @keyup.enter.native="addClass"
+              @blur="addClass"
+              style="margin: 5px"
+            />
+            <el-button
+              v-else
+              class="button-new-class"
+              type="primary"
+              plain
+              size="small"
+              @click="showClassInput"
+              style="margin: 5px"
             >
-              {{ c }}
-            </el-tag>
+              + New Class
+            </el-button>
           </div>
-          <el-input
-            v-model="newLink"
-            placeholder="Tell your fun story"
-            @keyup.enter.native="addLink"
-            @blur="addLink"
-          />
-        </div>
-        <!-- </End: Interesting Links> -->
+          <!-- end: my class -->
 
-        <div class="bottom-button">
-          <el-button type="danger" @click="onSubmit">Save</el-button>
+          <!-- <future goal> -->
+          <h4>Future Goal</h4>
+          <div>
+            <div
+              v-for="(c, i) in form.futureGoals"
+              :key="i"
+              style="margin: 0 -5px"
+            >
+              <el-tag
+                closable
+                :disable-transitions="false"
+                @close="removeGoal(i)"
+                type="warning"
+              >
+                {{ i + 1 + ". " + c }}
+              </el-tag>
+            </div>
+            <el-input
+              v-model="newGoal"
+              placeholder="Get A in CS506. (Press Enter to add a future goal)"
+              @keyup.enter.native="addGoal"
+              @blur="addGoal"
+            />
+          </div>
+          <!-- <end: future goal> -->
+
+          <!-- <Fun Stuff> -->
+          <h4>Fun Stuff</h4>
+          <div class="fun-stuffs">
+            <div
+              class="fun-stuff form-item"
+              v-for="(fun, i) in form.funStuff"
+              :key="i"
+            >
+              <UploadImg
+                hint="Add Photo!"
+                :foldername="user.data.uid"
+                :resizeWidth="800"
+                :resizeHeight="800"
+                :width="300"
+                :height="300"
+                :imgUrl="fun.imgUrl"
+                @uploaded="url => (fun.imgUrl = url)"
+              />
+              <el-input type="textarea" :rows="8" v-model="fun.text" />
+              <el-button
+                type="danger"
+                icon="el-icon-delete"
+                circle
+                @click="removeFun(i)"
+              />
+            </div>
+            <el-button type="danger" plain size="small" @click="addFun">
+              + Add Fun Stuff
+            </el-button>
+          </div>
+          <!-- </End: Fun Stuff> -->
+
+          <!-- <Other Stuff> -->
+          <h4>Other Stuff</h4>
+          <div />
+          <!-- </End: Other Stuff> -->
+
+          <!-- <Interesting Links> -->
+          <h4>Interesting Links</h4>
+          <div>
+            <div
+              v-for="(c, i) in form.interestingLinks"
+              :key="i"
+              style="margin: 0 -5px"
+            >
+              <el-tag
+                closable
+                :disable-transitions="false"
+                @close="removeLink(i)"
+                type="success"
+              >
+                {{ c }}
+              </el-tag>
+            </div>
+            <el-input
+              v-model="newLink"
+              placeholder="Tell your fun story"
+              @keyup.enter.native="addLink"
+              @blur="addLink"
+            />
+          </div>
+          <!-- </End: Interesting Links> -->
+
+          <div class="bottom-button">
+            <el-button type="danger" @click="onSubmit">Save</el-button>
+          </div>
         </div>
       </el-card>
       <!-- <End: Profile Setting> -->
@@ -247,7 +262,6 @@ export default {
       currentPassword: "",
       newPassword: "",
       confirmNewPassword: "",
-      aboutMeImgUrl: null,
       aboutMeImgProgress: -1,
       newClass: "",
       classInputVisible: false,
@@ -256,6 +270,7 @@ export default {
       newLink: "",
       form: {
         aboutMe: "",
+        aboutMeImgUrl: "",
         myClasses: [],
         futureGoals: [],
         funStuff: [],
@@ -276,7 +291,6 @@ export default {
           this.email = user.data.email || "";
 
           this.fetchProfile(user.data.uid);
-          this.fetchAboutMeImg(user.data.uid);
         }
       },
       deep: true,
@@ -398,6 +412,7 @@ export default {
           this.form.futureGoals = data.futureGoals || [];
           this.form.funStuff = data.funStuff || [];
           this.form.interestingLinks = data.interestingLinks || [];
+          this.form.aboutMeImgUrl = data.aboutMeImgUrl || "";
           // console.log(doc.data());
         } else {
           // console.log("not found");
@@ -405,90 +420,6 @@ export default {
       });
     },
     // Update Profile
-    uploadAboutMeImg(e) {
-      // Create a root reference
-      let ref = firebase.storage().ref(this.user.data.uid + "/aboutme.png");
-
-      this.convertImg(e.target.files[0], "aboutme.png", 1200, png => {
-        const task = ref.put(png);
-        task.on(
-          "state_changed",
-          snapshot => {
-            // progress
-            this.aboutMeImgProgress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          },
-          err => {
-            // error
-            alert("Error while uploading about me photo:", err.message);
-            setTimeout(() => {
-              this.aboutMeImgProgress = -1;
-            }, 1000);
-          },
-          () => {
-            // success
-            // console.log("Uploaded");
-            task.snapshot.ref.getDownloadURL().then(url => {
-              this.aboutMeImgUrl = url;
-              setTimeout(() => {
-                this.aboutMeImgProgress = -1;
-              }, 1000);
-            });
-          }
-        );
-      });
-    },
-    fetchAboutMeImg(uid) {
-      let storage = firebase.storage();
-      let ref = storage.ref(uid + "/aboutme.png");
-      ref
-        .getDownloadURL()
-        .then(url => {
-          this.aboutMeImgUrl = url;
-        })
-        .catch(() => {});
-    },
-    convertImg(file, filename, resizeSize, cb) {
-      //load original image
-      let original = new Image();
-      original.onload = () => {
-        // put image to canvas
-        let canvas = document.createElement("canvas");
-        // reszie image using canvas
-        let width = original.width;
-        let height = original.height;
-        if (width > height) {
-          if (width > resizeSize) {
-            height *= resizeSize / width;
-            width = resizeSize;
-          }
-        } else {
-          if (height > resizeSize) {
-            width *= resizeSize / height;
-            height = resizeSize;
-          }
-        }
-        canvas.width = width;
-        canvas.height = height;
-        canvas.getContext("2d").drawImage(original, 0, 0, width, height);
-        // read from canvas to png image file
-        let dataURL = canvas.toDataURL("image/png");
-        // https://stackoverflow.com/a/43358515/12017013
-        let arr = dataURL.split(","),
-          mime = arr[0].match(/:(.*?);/)[1],
-          bstr = atob(arr[1]),
-          n = bstr.length,
-          u8arr = new Uint8Array(n);
-        while (n--) {
-          u8arr[n] = bstr.charCodeAt(n);
-        }
-        cb(new File([u8arr], filename, { type: mime }));
-      };
-      original.onerror = () => {
-        alert("The provided file couldn't be loaded as an Image media");
-      };
-      original.src = URL.createObjectURL(file);
-    },
     addClass() {
       let newClass = this.newClass.trim();
       if (newClass && !this.form.myClasses.includes(newClass)) {
@@ -517,11 +448,10 @@ export default {
       this.form.futureGoals.splice(index, 1);
     },
     addFun() {
-      let newFun = this.newFun.trim();
-      if (newFun && !this.form.funStuff.includes(newFun)) {
-        this.form.funStuff.push(newFun);
-      }
-      this.newFun = "";
+      this.form.funStuff.push({
+        text: "",
+        imgUrl: "",
+      });
     },
     removeFun(index) {
       this.form.funStuff.splice(index, 1);
@@ -536,20 +466,13 @@ export default {
     removeLink(index) {
       this.form.interestingLinks.splice(index, 1);
     },
-
     onSubmit() {
       console.log("submit!");
       let db = firebase.firestore();
 
       db.collection("aboutMe")
         .doc(this.user.data.uid)
-        .set({
-          aboutMe: this.form.aboutMe.trim(),
-          myClasses: this.form.myClasses,
-          futureGoals: this.form.futureGoals,
-          funStuff: this.form.funStuff,
-          interestingLinks: this.form.interestingLinks,
-        })
+        .set(this.form)
         .then(() => {
           alert("Update Profile Successful.");
           this.$router.push("/user");
@@ -583,6 +506,13 @@ h3 {
   font-size: 24px;
   margin: 0 auto 50px;
 }
+h4 {
+  margin-top: 40px;
+  padding-top: 20px;
+  &:not(:first-child) {
+    border-top: 1px solid #ddd;
+  }
+}
 
 .el-tag {
   margin: 5px;
@@ -607,5 +537,11 @@ h3 {
 }
 .el-textarea {
   font-size: 16px;
+}
+
+.fun-stuffs {
+  .fun-stuff {
+    margin-bottom: 1rem;
+  }
 }
 </style>

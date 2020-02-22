@@ -32,8 +32,8 @@
             <div class="down-left">
               <div class="img-wrapper">
                 <img
-                  v-if="aboutMeImgUrl"
-                  :src="aboutMeImgUrl"
+                  v-if="data.aboutMeImgUrl"
+                  :src="data.aboutMeImgUrl"
                   alt="profile image"
                 />
                 <img v-else src="../assets/keropi2.jpg" alt="profile image" />
@@ -99,18 +99,14 @@
           <div class="funStuff-up">
             <h2>Fun Stuff</h2>
           </div>
-          <div class="funStuff-down">
-            <div class="funStuff-left">
+          <div class="funStuff-down" v-for="(fun, i) in data.funStuff" :key="i">
+            <div class="funStuff-left" v-if="fun.imgUrl">
               <div class="img-wrapper">
-                <img src="../assets/yoyo.png" alt="profile image" />
+                <img :src="fun.imgUrl" alt="fun stuff image" />
               </div>
             </div>
-            <div
-              class="funStuff-right"
-              v-for="(c, i) in data.funStuff"
-              :key="i"
-            >
-              {{ c }}
+            <div class="funStuff-right" :style="i % 2 !== 0 ? 'order: -1' : ''">
+              {{ fun.text }}
             </div>
           </div>
         </div>
@@ -180,7 +176,6 @@ export default {
     data: Object,
     displayName: String,
     photoURL: String,
-    aboutMeImgUrl: String,
   },
 };
 </script>
@@ -350,11 +345,12 @@ export default {
     border-left: 9px solid #80d49a;
     .funStuff-down {
       display: flex;
-      padding: 0 28px;
+      padding: 30px 28px;
       align-items: center;
+      justify-content: center;
     }
     .funStuff-left {
-      flex: 1 0 35%;
+      flex: 0 0 360px;
       transform: rotate(-7deg);
       .img-wrapper {
         border: 5px solid #80d49a;

@@ -7,11 +7,11 @@
       height: `${height}px`,
     }"
   >
-    <img v-if="url" :src="url" alt="about me image" />
+    <img v-if="imgUrl" :src="imgUrl" alt="about me image" />
     <div class="upload-overlay">
       <div
         class="hint"
-        :class="{ 'no-img': !url }"
+        :class="{ 'no-img': !imgUrl }"
         :style="progress != -1 ? 'opacity: 1' : ''"
       >
         <i class="el-icon-upload" />
@@ -48,15 +48,12 @@ export default {
       type: Boolean,
       default: false,
     },
+    imgUrl: String,
   },
   data() {
     return {
-      url: null,
       progress: -1,
     };
-  },
-  mounted() {
-    this.fetchImg();
   },
   methods: {
     convertImg(file, filename, cb) {
@@ -117,9 +114,10 @@ export default {
     },
     onUpload(e) {
       // Create a root reference
-      let ref = firebase.storage().ref(`${this.foldername}/${this.filename}`);
+      const filename = this.filename || new Date().toISOString();
+      let ref = firebase.storage().ref(`${this.foldername}/${filename}`);
 
-      this.convertImg(e.target.files[0], this.filename, png => {
+      this.convertImg(e.target.files[0], filename, png => {
         const task = ref.put(png);
         task.on(
           "state_changed",
@@ -130,7 +128,7 @@ export default {
           },
           err => {
             // error
-            alert(`Error while uploading ${this.filename} photo:`, err.message);
+            alert(`Error while uploading ${filename} photo:`, err.message);
             setTimeout(() => {
               this.progress = -1;
             }, 1000);
@@ -139,7 +137,6 @@ export default {
             // success
             // console.log("Uploaded");
             task.snapshot.ref.getDownloadURL().then(url => {
-              this.url = url;
               setTimeout(() => {
                 this.progress = -1;
               }, 1000);
@@ -148,16 +145,6 @@ export default {
           }
         );
       });
-    },
-    fetchImg() {
-      let storage = firebase.storage();
-      let ref = storage.ref(this.foldername + "/" + this.filename);
-      ref
-        .getDownloadURL()
-        .then(url => {
-          this.url = url;
-        })
-        .catch(() => {});
     },
   },
 };

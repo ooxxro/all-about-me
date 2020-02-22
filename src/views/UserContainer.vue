@@ -9,7 +9,6 @@
       :data="data"
       :displayName="user.data.displayName"
       :photoURL="user.data.photoURL"
-      :aboutMeImgUrl="aboutMeImgUrl"
     />
   </div>
 </template>
@@ -28,7 +27,6 @@ export default {
   data() {
     return {
       data: null,
-      aboutMeImgUrl: null,
     };
   },
   computed: {
@@ -42,7 +40,6 @@ export default {
         // console.log("watch user", val);
         if (val.data && val.data.uid) {
           this.updateData(val.data.uid);
-          this.fetchAboutMeImg(val.data.uid);
         }
       },
       deep: true,
@@ -66,16 +63,6 @@ export default {
       // .catch(error => {
       //   console.log("Fetch data error:", error);
       // });
-    },
-    fetchAboutMeImg(uid) {
-      let storage = firebase.storage();
-      let ref = storage.ref(uid + "/aboutme.png");
-      ref
-        .getDownloadURL()
-        .then(url => {
-          this.aboutMeImgUrl = url;
-        })
-        .catch(() => {});
     },
   },
 };
