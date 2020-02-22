@@ -239,12 +239,11 @@
             <h2>Comments</h2>
           </div>
           <div class="comments-down">
-            <p>
-              Hello
-              <br />
-              <br />
-              Nice to meet you
-            </p>
+            <vue-disqus
+              shortname="bb-all-about-me"
+              :identifier="uid"
+              :url="currentURL"
+            />
           </div>
         </div>
       </div>
@@ -274,6 +273,11 @@ export default {
         "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
       friendData: {},
     };
+  },
+  computed: {
+    currentURL() {
+      return window.location.href;
+    },
   },
   watch: {
     "data.friendList": {

@@ -8,9 +8,11 @@ import store from "./store";
 import firebase from "firebase";
 import Loading from "./components/Loading";
 import VueScrollTo from "vue-scrollto";
+import VueDisqus from "vue-disqus";
 
 Vue.use(ElementUI);
 Vue.use(VueScrollTo);
+Vue.use(VueDisqus);
 
 Vue.component("Loading", Loading);
 
