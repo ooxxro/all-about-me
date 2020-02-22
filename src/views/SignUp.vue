@@ -55,12 +55,30 @@ export default {
     signUp() {
       if (!this.email || !this.password) return;
 
+      let db = firebase.firestore();
+
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
         .then(
-          () => {
-            this.$router.replace("/setting");
+          res => {
+            db.collection("aboutMe")
+              .doc(res.user.uid)
+              .set({
+                displayName: "",
+                photoURL: "",
+                friendList: [],
+                aboutMe: "",
+                aboutMeImgUrl: "",
+                myClasses: [],
+                futureGoals: [],
+                funStuff: [],
+                otherStuff: "",
+                interestingLinks: [],
+              })
+              .then(() => {
+                this.$router.replace("/setting");
+              });
           },
           err => {
             alert("Oops. " + err.message);

@@ -6,7 +6,7 @@
 
     <div class="right" v-if="!user.loading">
       <div class="logged-in" v-if="user.loggedIn">
-        <router-link class="profile-wrapper" to="/user">
+        <router-link class="profile-wrapper" :to="`/user/${user.data.uid}`">
           <div class="name" v-if="user.data.displayName">
             {{ user.data.displayName }}
           </div>

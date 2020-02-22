@@ -3,13 +3,7 @@
     <div class="menu">
       <div class="menu-top">
         <div class="profile-wrapper">
-          <img
-            :src="
-              photoURL ||
-                'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
-            "
-            alt="avatar"
-          />
+          <img :src="data.photoURL || defaultPhotoURL" alt="avatar" />
         </div>
       </div>
       <div class="menu-item-after menu-item-top-after" />
@@ -76,6 +70,34 @@
       </div>
     </div>
     <div id="content" class="content">
+      <div class="toolbar">
+        <el-button
+          v-if="
+            loggedIn &&
+              !isSelf &&
+              (!currentUserData.friendList ||
+                !currentUserData.friendList.includes(uid))
+          "
+          type="danger"
+          round
+          @click="onAddFriend"
+          >+ Add Friend</el-button
+        >
+        <el-button
+          v-if="
+            loggedIn &&
+              !isSelf &&
+              currentUserData.friendList &&
+              currentUserData.friendList.includes(uid)
+          "
+          type="info"
+          plain
+          round
+          @click="onUnfriend"
+        >
+          Un-friend
+        </el-button>
+      </div>
       <div id="about-me" class="content-aboutMe">
         <div class="aboutMe-upDown">
           <div class="aboutMe-down">
@@ -90,7 +112,7 @@
               </div>
             </div>
             <div class="down-right" v-if="data">
-              <h2>Hi, I'm {{ displayName ? displayName : "..." }}</h2>
+              <h2>Hi, I'm {{ data.displayName ? data.displayName : "..." }}</h2>
               <div v-if="data.aboutMe">{{ data.aboutMe }}</div>
               <div v-else>I'm too lazy to write something about myself...</div>
             </div>
@@ -102,7 +124,22 @@
           <div class="friendList-up">
             <h2>Friend List</h2>
           </div>
-          <div class="friendList-down" />
+          <div class="friendList-down">
+            <router-link
+              v-for="(fuid, i) in data.friendList"
+              :key="i"
+              :to="`/user/${fuid}`"
+              class="friend-tag"
+            >
+              <template v-if="friendData[fuid]">
+                <img
+                  :src="friendData[fuid].photoURL || defaultPhotoURL"
+                  alt="avatar"
+                />
+                <span>{{ friendData[fuid].displayName }}</span>
+              </template>
+            </router-link>
+          </div>
         </div>
       </div>
       <div id="my-classes" class="section content-myClass">
@@ -221,17 +258,84 @@
 </template>
 
 <script>
+import firebase from "firebase";
 export default {
   props: {
     data: Object,
-    displayName: String,
-    photoURL: String,
+    loggedIn: Boolean,
+    isSelf: Boolean,
+    uid: String,
+    currentUser: Object,
+    currentUserData: Object,
+  },
+  data() {
+    return {
+      defaultPhotoURL:
+        "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
+      friendData: {},
+    };
+  },
+  watch: {
+    "data.friendList": {
+      handler() {
+        this.fetchFriendList();
+      },
+      immediate: true,
+      deep: true,
+    },
   },
   methods: {
     scrollTo(selector) {
       this.$scrollTo(document.querySelector(selector), 300, {
         container: document.querySelector("#content"),
         offset: -40,
+      });
+    },
+    onAddFriend() {
+      if (!this.loggedIn) return;
+
+      let db = firebase.firestore();
+      db.collection("aboutMe")
+        .doc(this.currentUser.uid)
+        .update({
+          friendList: firebase.firestore.FieldValue.arrayUnion(this.uid),
+        })
+        .then(() => {
+          // console.log("add friend success");
+          this.$store.dispatch("fetchUserData");
+        })
+        .catch(() => {
+          // console.error("Error when add friend: " + err.message);
+        });
+    },
+    onUnfriend() {
+      if (!this.loggedIn) return;
+
+      let db = firebase.firestore();
+      db.collection("aboutMe")
+        .doc(this.currentUser.uid)
+        .update({
+          friendList: firebase.firestore.FieldValue.arrayRemove(this.uid),
+        })
+        .then(() => {
+          // console.log("un-friend success");
+          this.$store.dispatch("fetchUserData");
+        })
+        .catch(() => {
+          // console.error("Error when un-friend: " + err.message);
+        });
+    },
+    fetchFriendList() {
+      if (!this.data.friendList) return;
+
+      let db = firebase.firestore();
+      this.data.friendList.forEach(uid => {
+        let docRef = db.collection("aboutMe").doc(uid);
+        docRef.get().then(doc => {
+          if (doc.exists) {
+            this.$set(this.friendData, uid, doc.data());
+          }
+        });
       });
     },
   },
@@ -361,6 +465,15 @@ export default {
   overflow-x: hidden;
   overflow-y: auto;
   // word-break: break-word;
+  .toolbar {
+    padding: 5px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    > * {
+      margin: 10px;
+    }
+  }
   .section {
     background: rgba(255, 227, 243, 0.5);
     padding: 0.5rem 2.5rem 1.5rem 2.5rem;
@@ -378,7 +491,6 @@ export default {
   .content-aboutMe {
     padding: 0rem 2.5rem 0.5rem 2.5rem;
     .aboutMe-down {
-      margin-top: 55px;
       display: flex;
       padding: 0 70px;
       align-items: center;
@@ -431,6 +543,26 @@ export default {
 
   .content-friendList {
     border-left: 9px solid #f78b7c;
+    .friend-tag {
+      display: inline-flex;
+      align-items: center;
+      border-left: 6px solid #f78b7c;
+      padding: 10px 30px;
+      background: #ffbaba;
+      color: #000;
+      margin: 10px;
+      border-radius: 4px;
+      font-size: 20px;
+      text-decoration: none;
+      img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        overflow: hidden;
+        object-fit: cover;
+        margin-right: 20px;
+      }
+    }
   }
 
   .content-myClass {

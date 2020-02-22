@@ -270,6 +270,8 @@ export default {
       newFun: "",
       newLink: "",
       form: {
+        displayName: "",
+        photoURL: "",
         aboutMe: "",
         aboutMeImgUrl: "",
         myClasses: [],
@@ -302,6 +304,13 @@ export default {
   methods: {
     ...mapActions(["fetchUser"]),
     onUploadedAvatar(url) {
+      // update firestore db
+      let db = firebase.firestore();
+      db.collection("aboutMe")
+        .doc(this.user.data.uid)
+        .update({ photoURL: url });
+
+      // update auth profile
       const user = firebase.auth().currentUser;
       user
         .updateProfile({
@@ -315,8 +324,14 @@ export default {
         });
     },
     onSubmitDisplayName() {
-      const user = firebase.auth().currentUser;
+      // update firestore db
+      let db = firebase.firestore();
+      db.collection("aboutMe")
+        .doc(this.user.data.uid)
+        .update({ displayName: this.displayName.trim() });
 
+      // update auth profile
+      const user = firebase.auth().currentUser;
       user
         .updateProfile({
           displayName: this.displayName.trim(),
@@ -409,6 +424,8 @@ export default {
       docRef.get().then(doc => {
         if (doc.exists) {
           const data = doc.data();
+          this.form.displayName = data.displayName || "";
+          this.form.photoURL = data.photoURL || "";
           this.form.aboutMe = data.aboutMe || "";
           this.form.myClasses = data.myClasses || [];
           this.form.futureGoals = data.futureGoals || [];
@@ -475,10 +492,10 @@ export default {
 
       db.collection("aboutMe")
         .doc(this.user.data.uid)
-        .set(this.form)
+        .update(this.form)
         .then(() => {
           alert("Update Profile Successful.");
-          this.$router.push("/user");
+          this.$router.push("/user/" + this.user.data.uid);
         })
         .catch(err => {
           alert("Error occurred when updating profile: " + err.message);

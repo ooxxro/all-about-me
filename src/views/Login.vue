@@ -55,8 +55,8 @@ export default {
         .auth()
         .signInWithEmailAndPassword(this.email, this.password)
         .then(
-          () => {
-            this.$router.replace("/user");
+          res => {
+            this.$router.replace("/user/" + res.user.uid);
           },
           err => {
             alert("Oops. " + err.message);

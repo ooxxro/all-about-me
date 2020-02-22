@@ -19,7 +19,7 @@ const routes = [
   //   redirect: "/login"
   // },
   {
-    path: "/user",
+    path: "/user/:uid",
     name: "User",
     component: UserContainer,
   },

@@ -1,14 +1,20 @@
 <template>
   <div class="user-container">
     <Header />
-    <div v-if="!data || !user.data" class="loading-wrapper">
+    <div v-if="notfound" class="notfound">
+      404 Not Found
+    </div>
+    <div v-else-if="!data" class="loading-wrapper">
       <Loading />
     </div>
     <User
       v-else
       :data="data"
-      :displayName="user.data.displayName"
-      :photoURL="user.data.photoURL"
+      :loggedIn="user.loggedIn"
+      :isSelf="user.loggedIn && user.data.uid === $route.params.uid"
+      :uid="$route.params.uid"
+      :currentUser="user.data"
+      :currentUserData="userData"
     />
   </div>
 </template>
@@ -27,11 +33,13 @@ export default {
   data() {
     return {
       data: null,
+      notfound: false,
     };
   },
   computed: {
     ...mapGetters({
       user: "user",
+      userData: "userData",
     }),
   },
   watch: {
@@ -39,8 +47,18 @@ export default {
       handler(val) {
         // console.log("watch user", val);
         if (val.data && val.data.uid) {
-          this.updateData(val.data.uid);
+          // this.updateData(val.data.uid);
+          console.log(val.data.uid);
         }
+      },
+      deep: true,
+      immediate: true,
+    },
+    $route: {
+      handler(/*to, from*/) {
+        // react to route changes...
+        console.log(this.$route.params.uid);
+        this.updateData(this.$route.params.uid);
       },
       deep: true,
       immediate: true,
@@ -48,6 +66,7 @@ export default {
   },
   methods: {
     updateData(uid) {
+      this.notfound = false;
       // console.log("updateData");
       let db = firebase.firestore();
       let docRef = db.collection("aboutMe").doc(uid);
@@ -57,7 +76,7 @@ export default {
           // console.log(doc.data());
         } else {
           // console.log("not found");
-          this.data = {};
+          this.notfound = true;
         }
       });
       // .catch(error => {
@@ -76,5 +95,12 @@ export default {
 .loading-wrapper {
   position: relative;
   flex: 1;
+}
+.notfound {
+  font-size: 50px;
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
