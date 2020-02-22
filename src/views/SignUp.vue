@@ -40,6 +40,7 @@
 <script>
 import Header from "../components/Header.vue";
 import firebase from "firebase";
+import { mapActions } from "vuex";
 export default {
   name: "signUp",
   components: {
@@ -52,6 +53,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions(["fetchUser"]),
     signUp() {
       if (!this.email || !this.password) return;
 
@@ -62,10 +64,12 @@ export default {
         .createUserWithEmailAndPassword(this.email, this.password)
         .then(
           res => {
-            db.collection("aboutMe")
+            const displayName = this.email.split("@")[0];
+            const dbPromise = db
+              .collection("aboutMe")
               .doc(res.user.uid)
               .set({
-                displayName: "",
+                displayName,
                 photoURL: "",
                 friendList: [],
                 aboutMe: "",
@@ -75,6 +79,21 @@ export default {
                 funStuff: [],
                 otherStuff: "",
                 interestingLinks: [],
+                lastUpdated: new Date(),
+                createdAt: new Date(),
+              });
+            const user = firebase.auth().currentUser;
+            const authPromise = user.updateProfile({
+              displayName,
+            });
+
+            Promise.all([dbPromise, authPromise])
+              .then(() => {
+                // Update successful.
+                return user.reload();
+              })
+              .then(() => {
+                this.fetchUser(firebase.auth().currentUser);
               })
               .then(() => {
                 this.$router.replace("/setting");
@@ -121,7 +140,7 @@ export default {
 }
 .el-card {
   // margin-top: 37px;
-  max-width: 400px;
+  width: 400px;
   padding: 0 30px;
 }
 h3 {

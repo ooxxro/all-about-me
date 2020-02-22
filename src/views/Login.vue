@@ -99,7 +99,7 @@ export default {
 }
 .el-card {
   // margin: 35px auto;
-  max-width: 400px;
+  width: 400px;
   padding: 0 30px;
 }
 h3 {

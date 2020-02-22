@@ -7,3 +7,10 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Redirect default Netlify subdomain to primary domain
+[[redirects]]
+  from = "https://bb-all-about-me.netlify.com/*"
+  to = "https://allaboutme.amberber.me/:splat"
+  status = 301
+  force = true

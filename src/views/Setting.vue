@@ -492,7 +492,13 @@ export default {
 
       db.collection("aboutMe")
         .doc(this.user.data.uid)
-        .update(this.form)
+        .set(
+          {
+            ...this.form,
+            lastUpdated: new Date(),
+          },
+          { merge: true }
+        )
         .then(() => {
           alert("Update Profile Successful.");
           this.$router.push("/user/" + this.user.data.uid);

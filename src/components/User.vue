@@ -72,6 +72,14 @@
     <div id="content" class="content">
       <div class="toolbar">
         <el-button
+          v-if="loggedIn && isSelf"
+          type="danger"
+          round
+          @click="() => $router.push('/setting')"
+        >
+          Edit profile
+        </el-button>
+        <el-button
           v-if="
             loggedIn &&
               !isSelf &&
@@ -211,7 +219,7 @@
           </div>
         </div>
       </div>
-      <div id="interesting-link" class="section content-interestingLinks">
+      <div id="interesting-links" class="section content-interestingLinks">
         <div class="link-upDown">
           <div class="link-up">
             <h2>Interesting Links</h2>
@@ -471,6 +479,7 @@ export default {
   overflow-y: auto;
   // word-break: break-word;
   .toolbar {
+    min-height: 70px;
     padding: 5px 40px;
     display: flex;
     align-items: center;
@@ -631,6 +640,7 @@ export default {
     }
     .funStuff-right {
       // border-left: 6px solid #bace5c;
+      white-space: pre-wrap;
       padding: 10px 30px;
       display: inline-block;
       background: #ffbaba;
