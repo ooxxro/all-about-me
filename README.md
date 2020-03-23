@@ -1,8 +1,12 @@
-# spike
+# All-About-Me
+
+A Social Media Web App built with Vue.js, Firebase, Element-UI, Disqus, Vuex, Vue-Router, and Sass.
 
 ## Online Demo
 
 https://allaboutme.amberber.me/
+
+![screenshot](screenshot.png)
 
 ## Project setup
 
