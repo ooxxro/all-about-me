@@ -31,7 +31,7 @@ const firebaseConfig = {
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
-// firebase.analytics();
+firebase.analytics();
 
 let app = null;
 firebase.auth().onAuthStateChanged(user => {
