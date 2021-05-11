@@ -4,7 +4,7 @@ A Social Media Web App built with Vue.js, Firebase, Element-UI, Disqus, Vuex, Vu
 
 ## Online Demo
 
-https://allaboutme.amberber.me/
+https://bb-all-about-me.netlify.app/
 
 ![screenshot](screenshot.png)
 
